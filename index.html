@@ -1043,8 +1043,16 @@ function calcularResultados() {
   });
 
   const tipoMax = Object.entries(scoresTipo).sort((a,b) => b[1]-a[1])[0][0];
-  const subtipos = scoresSubtipo[tipoMax];
-  const subtipoMax = Object.entries(subtipos).sort((a,b) => b[1]-a[1])[0][0];
+  // Usar solo subtipos del tipo dominante con parseInt para evitar mismatch string/int
+  const subtipos = scoresSubtipo[parseInt(tipoMax)];
+  const totalSub = (subtipos.P || 0) + (subtipos.N || 0) + (subtipos.T || 0);
+  let subtipoMax;
+  if (totalSub === 0) {
+    const opts = ['P','N','T'];
+    subtipoMax = opts[Math.floor(Math.random() * 3)];
+  } else {
+    subtipoMax = Object.entries(subtipos).sort((a,b) => b[1]-a[1])[0][0];
+  };
   const discMax = Object.entries(scoresDISC).sort((a,b) => b[1]-a[1])[0][0];
 
   estado.resultados = { tipoMax: parseInt(tipoMax), subtipoMax, discMax, scoresTipo, scoresSubtipo, scoresDISC };
@@ -1394,8 +1402,17 @@ function enviarResultados(tipoNum, subtipoMax, discMax, scoresTipo, scoresDISC) 
   };
 
   emailjs.send('service_rhtaaqj', 'template_x43th0l', templateParams)
-    .then(function(res){ console.log('Mail enviado OK:', res.status); })
-    .catch(function(err){ console.log('Mail error:', err); });
+    .then(function(res){ 
+      console.log('Mail enviado OK:', res.status, res.text);
+      // Show subtle confirmation
+      const btn = document.querySelector('.btn-client');
+      if (btn) btn.title = 'Mail enviado a coach';
+    })
+    .catch(function(err){ 
+      console.error('Mail error completo:', JSON.stringify(err));
+      // Try alternative: log full error details
+      console.error('Status:', err.status, 'Text:', err.text);
+    });
 }
 
 </script>
