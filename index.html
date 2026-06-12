@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test de Liderazgo Integral — Alto Impacto</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+  :root {
+    --navy: #1B2B6B;
+    --orange: #F5A623;
+    --navy-light: #e8ecf8;
+    --gray: #f4f5f7;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e2e8f0;
+    --white: #ffffff;
+    --D: #D85A30;
+    --I: #BA7517;
+    --S: #0F6E56;
+    --C: #185FA5;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: var(--gray); color: var(--text); min-height: 100vh; }
+
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: var(--navy); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .header img { height: 40px; }
+  .header-title { color: white; font-size: 14px; opacity: 0.7; }
+
+  /* PORTADA */
+  .portada-hero { background: var(--navy); padding: 48px 24px 40px; text-align: center; }
+  .portada-hero img { height: 64px; margin-bottom: 24px; }
+  .portada-hero h1 { color: white; font-size: 26px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+  .portada-hero p { color: rgba(255,255,255,0.7); font-size: 15px; }
+  .orange-bar { height: 4px; background: var(--orange); width: 60px; margin: 16px auto 0; border-radius: 2px; }
+
+  .portada-form { max-width: 520px; margin: 0 auto; padding: 32px 24px; width: 100%; }
+  .form-group { margin-bottom: 20px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  input, select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 15px; background: white; color: var(--text); transition: border-color 0.2s; }
+  input:focus, select:focus { outline: none; border-color: var(--navy); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .btn-primary { width: 100%; padding: 14px; background: var(--navy); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .btn-primary:hover { background: #142057; }
+  .btn-orange { background: var(--orange); }
+  .btn-orange:hover { background: #e09520; }
+
+  /* TEST */
+  .test-header { background: var(--navy); padding: 16px 24px; }
+  .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-label { color: rgba(255,255,255,0.8); font-size: 13px; }
+  .progress-pct { color: var(--orange); font-size: 13px; font-weight: 600; }
+  .progress-bar { height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+  .progress-fill { height: 4px; background: var(--orange); border-radius: 2px; transition: width 0.3s; }
+  .block-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 8px; }
+  .block-1 { background: rgba(245,166,35,0.2); color: var(--orange); }
+  .block-2 { background: rgba(255,255,255,0.15); color: white; }
+
+  .question-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 640px; margin: 0 auto; padding: 40px 24px; width: 100%; }
+  .q-number { font-size: 12px; color: var(--muted); margin-bottom: 12px; font-weight: 500; }
+  .q-text { font-size: 20px; font-weight: 500; line-height: 1.5; color: var(--text); margin-bottom: 40px; }
+  .q-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .btn-si { padding: 16px; background: var(--navy); color: white; border: 2px solid var(--navy); border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.15s; letter-spacing: 1px; }
+  .btn-no { padding: 16px; background: white; color: var(--muted); border: 2px solid var(--border); border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.15s; letter-spacing: 1px; }
+  .btn-si:hover { background: #142057; }
+  .btn-no:hover { border-color: var(--navy); color: var(--navy); }
+  .btn-si.selected { background: var(--orange); border-color: var(--orange); }
+  .btn-no.selected { background: white; border-color: var(--navy); color: var(--navy); }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; }
+  .btn-nav { padding: 10px 20px; border: 1.5px solid var(--border); background: white; border-radius: 8px; font-size: 14px; cursor: pointer; color: var(--muted); }
+  .btn-nav:hover { border-color: var(--navy); color: var(--navy); }
+  .btn-siguiente { padding: 10px 24px; background: var(--navy); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn-siguiente:hover { background: #142057; }
+  .keyboard-hint { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; }
+
+  /* RESULTADOS */
+  .results-hero { background: var(--navy); padding: 32px 24px; text-align: center; }
+  .results-hero h2 { color: white; font-size: 22px; font-weight: 700; }
+  .results-hero p { color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 6px; }
+  .results-body { max-width: 720px; margin: 0 auto; padding: 32px 24px; width: 100%; }
+
+  .result-card { background: white; border-radius: var(--radius); border: 1px solid var(--border); padding: 24px; margin-bottom: 20px; }
+  .result-card-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px; }
+  .tipo-main { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .tipo-num { width: 56px; height: 56px; border-radius: 50%; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; flex-shrink: 0; }
+  .tipo-info h3 { font-size: 20px; font-weight: 700; color: var(--navy); }
+  .tipo-info p { font-size: 14px; color: var(--muted); margin-top: 2px; }
+  .subtipo-badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+  .sub-P { background: #FAECE7; color: #993C1D; }
+  .sub-N { background: #E6F1FB; color: #0C447C; }
+  .sub-T { background: #E1F5EE; color: #085041; }
+  .desc-text { font-size: 15px; line-height: 1.7; color: var(--text); margin-top: 12px; }
+  .fortalezas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .fort-item { padding: 8px 12px; background: var(--navy-light); border-radius: 8px; font-size: 13px; color: var(--navy); font-weight: 500; }
+  .desaf-item { padding: 8px 12px; background: #fff8ee; border-radius: 8px; font-size: 13px; color: #854F0B; font-weight: 500; }
+
+  .disc-bars { margin-top: 12px; }
+  .disc-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .disc-label { font-size: 13px; font-weight: 600; width: 80px; flex-shrink: 0; }
+  .disc-bar-bg { flex: 1; height: 12px; background: var(--gray); border-radius: 6px; overflow: hidden; }
+  .disc-bar-fill { height: 12px; border-radius: 6px; transition: width 0.6s ease; }
+  .disc-score { font-size: 13px; color: var(--muted); width: 32px; text-align: right; }
+
+  .results-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .btn-download { flex: 1; min-width: 180px; padding: 13px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn-client { background: var(--navy); color: white; }
+  .btn-client:hover { background: #142057; }
+  .btn-coach-toggle { background: white; color: var(--navy); border: 2px solid var(--navy); }
+  .btn-coach-toggle:hover { background: var(--navy-light); }
+
+  /* COACH MODAL */
+  .coach-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .coach-overlay.show { display: flex; }
+  .coach-modal { background: white; border-radius: var(--radius); padding: 28px; max-width: 500px; width: 100%; }
+  .coach-modal h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .coach-modal p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+  .coach-modal input { margin-bottom: 16px; }
+  .modal-buttons { display: flex; gap: 10px; }
+  .btn-cancel { flex: 1; padding: 11px; background: white; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; cursor: pointer; color: var(--muted); }
+  .error-msg { color: #D84040; font-size: 13px; margin-bottom: 12px; display: none; }
+
+  .coach-section { background: #1B2B6B08; border: 1.5px solid var(--navy); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+  .coach-section-title { font-size: 12px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .coach-tag { background: var(--orange); color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px; }
+  .coach-item { font-size: 14px; line-height: 1.6; color: var(--text); padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .coach-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .coach-q { font-size: 14px; line-height: 1.6; color: var(--navy); padding: 6px 0 6px 12px; border-left: 3px solid var(--orange); margin-bottom: 6px; }
+
+
+  .res-section-title { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin:28px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border); }
+  .subtipo-card { border-left:4px solid var(--orange); }
+  .disc-card { border-left:4px solid #185FA5; }
+  .subtipo-label-row { display:flex;align-items:center;margin-bottom:4px; }
+  .reflexion-card { background:#f0f4ff; }
+  .reflexion-item { display:flex;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #d8e0f5; }
+  .reflexion-item:last-child { border-bottom:none;margin-bottom:0;padding-bottom:0; }
+  .reflexion-num { width:24px;height:24px;border-radius:50%;background:var(--navy);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px; }
+  .reflexion-text { font-size:14px;font-style:italic;color:#2d3748;line-height:1.6; }
+
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .fortalezas-grid { grid-template-columns: 1fr; }
+    .results-actions { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PANTALLA 1: PORTADA -->
+<script>emailjs.init("sQeTcNjGsy1nozDjJ");</script>
+<div class="screen active" id="screen-portada">
+  <div class="portada-hero">
+    <img src="data:image/png;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//Z" alt="Alto Impacto">
+    <h1>Test de Liderazgo Integral</h1>
+    <p>Conocete como líder. Liderá con consciencia.</p>
+    <div class="orange-bar"></div>
+  </div>
+  <div class="portada-form">
+    <div class="form-group">
+      <label>Nombre completo</label>
+      <input type="text" id="p-nombre" placeholder="Tu nombre y apellido">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Empresa</label>
+        <input type="text" id="p-empresa" placeholder="Nombre de tu empresa">
+      </div>
+      <div class="form-group">
+        <label>Rol / Cargo</label>
+        <input type="text" id="p-rol" placeholder="Tu cargo actual">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Mail</label>
+      <input type="email" id="p-mail" placeholder="tu@mail.com">
+    </div>
+    <div class="form-group">
+      <label>¿Cómo llegaste a este test?</label>
+      <select id="p-origen">
+        <option value="">Seleccioná una opción</option>
+        <option>Referido por un colega</option>
+        <option>Redes sociales</option>
+        <option>Mi coach / consultora</option>
+        <option>Búsqueda en internet</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <button class="btn-primary btn-orange" onclick="iniciarTest()">Comenzar el test →</button>
+    <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:16px;">165 preguntas · aproximadamente 20 minutos</p>
+  </div>
+</div>
+
+<!-- PANTALLA 2: TEST -->
+<div class="screen" id="screen-test">
+  <div class="test-header">
+    <div class="progress-info">
+      <span class="progress-label" id="progress-label">Pregunta 1 de 165</span>
+      <span class="progress-pct" id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <span class="block-badge block-1" id="block-badge">Bloque 1 — Eneagrama</span>
+  </div>
+  <div class="question-wrap">
+    <div class="q-number" id="q-number"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="q-buttons">
+      <button class="btn-si" id="btn-si" onclick="responder(1)">SÍ</button>
+      <button class="btn-no" id="btn-no" onclick="responder(0)">NO</button>
+    </div>
+    <div class="nav-row">
+      <button class="btn-nav" onclick="anterior()">← Anterior</button>
+      <button class="btn-siguiente" onclick="siguiente()">Siguiente →</button>
+    </div>
+    <p class="keyboard-hint">Atajo: tecla S = Sí · N = No · → = Siguiente</p>
+  </div>
+</div>
+
+<!-- PANTALLA 3: RESULTADOS -->
+<div class="screen" id="screen-resultados">
+  <div class="results-hero">
+    <h2 id="res-titulo">Tu perfil de liderazgo</h2>
+    <p id="res-subtitulo"></p>
+  </div>
+  <div class="results-body">
+
+    <div class="results-actions">
+      <button class="btn-download btn-client" onclick="generarPDFCliente()">⬇ Descargar mi informe</button>
+      <button class="btn-download btn-coach-toggle" onclick="abrirModalCoach()">🔒 Vista coach</button>
+    </div>
+
+    <!-- 01 PATRÓN CENTRAL -->
+    <div class="res-section-title">01 · Tu patrón central</div>
+    <div class="result-card">
+      <div class="result-card-title">Quién sos como líder</div>
+      <div class="tipo-main">
+        <div class="tipo-num" id="res-tipo-num">—</div>
+        <div class="tipo-info">
+          <h3 id="res-tipo-nombre">—</h3>
+          <p id="res-tipo-estrategia">—</p>
+        </div>
+      </div>
+      <div class="desc-text" id="res-perfil-desc"></div>
+    </div>
+    <div class="result-card">
+      <div class="result-card-title">Tu principal desafío</div>
+      <div class="desc-text" id="res-desafio-desc"></div>
+    </div>
+    <div class="result-card">
+      <div class="result-card-title">Tu mayor oportunidad de crecimiento</div>
+      <div class="desc-text" id="res-crecimiento-desc"></div>
+    </div>
+
+    <!-- 02 SUBTIPO -->
+    <div class="res-section-title">02 · Cómo se expresa tu patrón en lo cotidiano</div>
+    <div class="result-card subtipo-card">
+      <div class="subtipo-label-row">
+        <span style="font-size:13px;color:var(--muted);margin-right:8px;">Sesgo instintivo:</span>
+        <span class="subtipo-badge" id="res-subtipo-badge">—</span>
+      </div>
+      <div class="desc-text" id="res-subtipo-desc" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- 03 DISC -->
+    <div class="res-section-title">03 · Tu estilo de liderazgo</div>
+    <div class="result-card disc-card">
+      <div class="tipo-main">
+        <div class="tipo-num" id="res-disc-letra" style="background:var(--D)">D</div>
+        <div class="tipo-info">
+          <h3 id="res-disc-titulo">—</h3>
+        </div>
+      </div>
+      <div class="desc-text" id="res-disc-desc"></div>
+      <div class="disc-bars" id="disc-bars"></div>
+    </div>
+
+    <!-- 04 SÍNTESIS -->
+    <div class="res-section-title">04 · En síntesis</div>
+    <div class="result-card">
+      <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;">Fortalezas de liderazgo</div>
+      <div class="fortalezas-grid" id="res-fortalezas"></div>
+      <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;margin-bottom:8px;">Áreas de desarrollo</div>
+      <div class="fortalezas-grid" id="res-desafios"></div>
+    </div>
+
+    <!-- 05 REFLEXIONES -->
+    <div class="res-section-title">05 · Preguntas para reflexionar antes de tu próxima sesión</div>
+    <div class="result-card reflexion-card" id="res-reflexiones"></div>
+
+    <!-- COACH SECTION -->
+    <div id="coach-content" style="display:none;">
+      <div class="res-section-title" style="color:var(--orange);">Vista coach — uso interno</div>
+      <div class="coach-section">
+        <div class="coach-section-title">Notas de facilitación <span class="coach-tag">SOLO COACH</span></div>
+        <div id="coach-notas"></div>
+      </div>
+      <div class="coach-section">
+        <div class="coach-section-title">Preguntas para la primera sesión <span class="coach-tag">SOLO COACH</span></div>
+        <div id="coach-preguntas"></div>
+      </div>
+      <div class="coach-section">
+        <div class="coach-section-title">Puntos ciegos típicos <span class="coach-tag">SOLO COACH</span></div>
+        <div id="coach-ciegos"></div>
+      </div>
+      <button class="btn-download" style="background:var(--navy);color:white;width:100%;margin-bottom:20px;" onclick="generarPDFCoach()">⬇ Descargar informe coach completo</button>
+    </div>
+
+    <div style="text-align:center;font-size:12px;color:var(--muted);padding:20px 0 40px;">
+      Alto Impacto Consultora · laurasanchezcoach.com · @laura.tucoach
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL COACH -->
+<div class="coach-overlay" id="coach-overlay">
+  <div class="coach-modal">
+    <h3>Acceso coach</h3>
+    <p>Ingresá la clave para ver las notas de facilitación.</p>
+    <input type="password" id="coach-pwd" placeholder="Contraseña" onkeydown="if(event.key==='Enter') verificarClave()">
+    <div class="error-msg" id="coach-error">Clave incorrecta. Intentá de nuevo.</div>
+    <div class="modal-buttons">
+      <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-primary" style="flex:1;" onclick="verificarClave()">Ingresar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATOS DEL TEST
+// ============================================================
+const PREGUNTAS = [
+  // BLOQUE 1: ENEAGRAMA (117 preguntas)
+  // TIPO 1
+  {id:1,text:"A menudo un defecto final arruina el conjunto.",tipo:"E",subtipo:null,enaTipo:1},
+  {id:2,text:"Con frecuencia me enfado porque ni yo ni los demás hacemos mejor las cosas.",tipo:"E",subtipo:null,enaTipo:1},
+  {id:3,text:"Noto enseguida si algo no funciona, está mal, o está fuera de lugar.",tipo:"E",subtipo:null,enaTipo:1},
+  {id:4,text:"Si algo no está bien, realmente me molesta.",tipo:"E",subtipo:null,enaTipo:1},
+  {id:5,text:"Necesito que las cosas salgan como las había pensado, que se hagan bien.",tipo:"E",subtipo:null,enaTipo:1},
+  {id:6,text:"Me gusta hacer las cosas, aunque tenga que sobre exigirme, porque nadie las hace tan bien como yo.",tipo:"E",subtipo:null,enaTipo:1},
+  {id:7,text:"Me molesta equivocarme, no me gustan que me vean cometiendo errores.",tipo:"E",subtipo:null,enaTipo:1},
+  {id:8,text:"Aunque generalmente no lo exprese, me irrito fácilmente cuando los demás no hacen lo que corresponde.",tipo:"E",subtipo:null,enaTipo:1},
+  {id:9,text:"No me gustan las improvisaciones, las considero una irresponsabilidad.",tipo:"E",subtipo:null,enaTipo:1},
+  {id:10,text:"No hay libertad sin responsabilidad.",tipo:"E",subtipo:null,enaTipo:1},
+  // TIPO 2
+  {id:11,text:"No puedo negar mi atención a alguien sin tener una buena excusa.",tipo:"E",subtipo:null,enaTipo:2},
+  {id:12,text:"Me gusta intimar, servir, entregar.",tipo:"E",subtipo:null,enaTipo:2},
+  {id:13,text:"Aunque a veces no quisiera comprometerme, me cuesta decir que no y poner límites a mi entrega.",tipo:"E",subtipo:null,enaTipo:2},
+  {id:14,text:"Me gusta dar para que me acepten, aunque tenga que postergar mis propias necesidades.",tipo:"E",subtipo:null,enaTipo:2},
+  {id:15,text:"Necesito que se den cuenta de mis necesidades, así como yo estoy pendiente de los demás.",tipo:"E",subtipo:null,enaTipo:2},
+  {id:16,text:"Puedo percibir fácilmente lo que la gente necesita.",tipo:"E",subtipo:null,enaTipo:2},
+  {id:17,text:"No me importa sacrificarme por los demás, con tal de hacerlos felices.",tipo:"E",subtipo:null,enaTipo:2},
+  {id:18,text:"Me siento una persona impulsada a ayudar a otras personas, aunque ellas no me lo pidan.",tipo:"E",subtipo:null,enaTipo:2},
+  {id:19,text:"Me gusta que la gente necesite de mí.",tipo:"E",subtipo:null,enaTipo:2},
+  {id:20,text:"A veces siento que no soy libre porque tengo que atender a los otros.",tipo:"E",subtipo:null,enaTipo:2},
+  // TIPO 3
+  {id:21,text:"Siento que soy una persona apreciada por los demás a través de mis logros.",tipo:"E",subtipo:null,enaTipo:3},
+  {id:22,text:"Me molesta el fracaso, eso es para los débiles.",tipo:"E",subtipo:null,enaTipo:3},
+  {id:23,text:"Las primeras impresiones son muy importantes, por eso me gusta proyectar una imagen triunfadora.",tipo:"E",subtipo:null,enaTipo:3},
+  {id:24,text:"Me gusta tener objetivos claros y saber en qué punto del camino hacia ellos me encuentro.",tipo:"E",subtipo:null,enaTipo:3},
+  {id:25,text:"Me cuesta compartir mis sentimientos más profundos porque temo que desvaloricen mi imagen.",tipo:"E",subtipo:null,enaTipo:3},
+  {id:26,text:"Me identifico tanto con mi trabajo o rol que hasta a veces me olvido de quién soy.",tipo:"E",subtipo:null,enaTipo:3},
+  {id:27,text:"El tiempo es oro, debe utilizarse de manera productiva.",tipo:"E",subtipo:null,enaTipo:3},
+  {id:28,text:"Vivo con cierta tensión porque me propongo demasiados objetivos.",tipo:"E",subtipo:null,enaTipo:3},
+  {id:29,text:"Me gusta proyectar, lograr éxito, triunfar.",tipo:"E",subtipo:null,enaTipo:3},
+  {id:30,text:"A veces necesito dejar de lado alguna norma si ésta me impide llegar a mis objetivos.",tipo:"E",subtipo:null,enaTipo:3},
+  // TIPO 4
+  {id:31,text:"Me considero una persona sensible, auténtica, especial y profunda.",tipo:"E",subtipo:null,enaTipo:4},
+  {id:32,text:"Es frecuente que otras personas carezcan de capacidad para comprender mis sentimientos.",tipo:"E",subtipo:null,enaTipo:4},
+  {id:33,text:"Me molesta lo rutinario y repetitivo, prefiero lo distinto y único.",tipo:"E",subtipo:null,enaTipo:4},
+  {id:34,text:"Mi vida es como una montaña rusa: a veces estoy en la cima y otras en un pozo, me cuesta equilibrar mis emociones.",tipo:"E",subtipo:null,enaTipo:4},
+  {id:35,text:"Aun en la rutina diaria, me gusta poner mi impronta personal.",tipo:"E",subtipo:null,enaTipo:4},
+  {id:36,text:"Me gusta expresar lo que siento en el arte, la originalidad, lo diferente y que de esa manera me reconozcan.",tipo:"E",subtipo:null,enaTipo:4},
+  {id:37,text:"Necesito mi tiempo para estar conmigo.",tipo:"E",subtipo:null,enaTipo:4},
+  {id:38,text:"Mi deseo de atender mis necesidades personales ha repercutido negativamente en mis relaciones.",tipo:"E",subtipo:null,enaTipo:4},
+  {id:39,text:"Soy una persona propensa a la nostalgia, a la melancolía y a revivir el pasado.",tipo:"E",subtipo:null,enaTipo:4},
+  {id:40,text:"Me gusta crear, soñar, vibrar la vida.",tipo:"E",subtipo:null,enaTipo:4},
+  // TIPO 5
+  {id:41,text:"A menudo me siento atrás para observar a los demás, en lugar de involucrarme en la acción.",tipo:"E",subtipo:null,enaTipo:5},
+  {id:42,text:"Generalmente, y hasta tener todo pensado, me lleva bastante tiempo empezar o hacer algo.",tipo:"E",subtipo:null,enaTipo:5},
+  {id:43,text:"Me he dado cuenta que, frecuentemente, me catalogan como demasiado racional.",tipo:"E",subtipo:null,enaTipo:5},
+  {id:44,text:"Necesito gran cantidad de espacio y de tiempos privados para estudiar y reflexionar.",tipo:"E",subtipo:null,enaTipo:5},
+  {id:45,text:"Por naturaleza soy una persona reservada, introvertida, independiente.",tipo:"E",subtipo:null,enaTipo:5},
+  {id:46,text:"Tiendo a ser una persona solitaria, me cuesta expresar mis emociones.",tipo:"E",subtipo:null,enaTipo:5},
+  {id:47,text:"Observo y analizo la realidad para entenderla.",tipo:"E",subtipo:null,enaTipo:5},
+  {id:48,text:"Necesito contar con información, entender de lo que se habla.",tipo:"E",subtipo:null,enaTipo:5},
+  {id:49,text:"Aunque deba tomar una decisión sencilla, necesito contar con toda la información.",tipo:"E",subtipo:null,enaTipo:5},
+  {id:50,text:"Me gusta que respeten mi soledad y mi distancia para poder procesar mis emociones y pensamientos.",tipo:"E",subtipo:null,enaTipo:5},
+  // TIPO 6
+  {id:51,text:"Con frecuencia las dudas me invaden.",tipo:"E",subtipo:null,enaTipo:6},
+  {id:52,text:"Frecuentemente me encuentro evaluando a los demás como posibles amenazas para mí.",tipo:"E",subtipo:null,enaTipo:6},
+  {id:53,text:"Ante la inseguridad reacciono volviéndome una persona terca y poniéndome a la defensiva.",tipo:"E",subtipo:null,enaTipo:6},
+  {id:54,text:"Es muy importante para mí la lealtad al grupo.",tipo:"E",subtipo:null,enaTipo:6},
+  {id:55,text:"Me parece que siento el peligro y la amenaza más que otras personas.",tipo:"E",subtipo:null,enaTipo:6},
+  {id:56,text:"Me pregunto a menudo si tengo suficiente valor para hacer lo que hay que hacer.",tipo:"E",subtipo:null,enaTipo:6},
+  {id:57,text:"Me gusta colaborar con los demás, ellos pueden fiarse de mí.",tipo:"E",subtipo:null,enaTipo:6},
+  {id:58,text:"Necesito estar seguro, no me gustan los cambios, lo desconocido.",tipo:"E",subtipo:null,enaTipo:6},
+  {id:59,text:"Aunque haya tomado una decisión, con frecuencia me replanteo si habrá sido la correcta.",tipo:"E",subtipo:null,enaTipo:6},
+  {id:60,text:"Me importa mucho lo que los otros puedan llegar a pensar de mí.",tipo:"E",subtipo:null,enaTipo:6},
+  // TIPO 7
+  {id:61,text:"Suelen acusarme de ser una persona indisciplinada, dispersa, inquieta, superficial.",tipo:"E",subtipo:null,enaTipo:7},
+  {id:62,text:"Me olvido fácilmente de lo que me produce dolor, no creo que sea bueno estar mucho tiempo triste.",tipo:"E",subtipo:null,enaTipo:7},
+  {id:63,text:"Me resulta difícil aceptar compromisos a largo plazo.",tipo:"E",subtipo:null,enaTipo:7},
+  {id:64,text:"Mi teoría es que si algo es bueno, más es mejor.",tipo:"E",subtipo:null,enaTipo:7},
+  {id:65,text:"Si tengo que elegir entre algo nuevo y algo conocido, tiendo a escoger lo nuevo.",tipo:"E",subtipo:null,enaTipo:7},
+  {id:66,text:"Suelo pasar de una cosa a otra, en vez de profundizar en una sola.",tipo:"E",subtipo:null,enaTipo:7},
+  {id:67,text:"Necesito nuevas experiencias, nuevas sensaciones, no me gusta la rutina ni los problemas.",tipo:"E",subtipo:null,enaTipo:7},
+  {id:68,text:"A veces soy una persona dispersa y curiosa, todo me interesa.",tipo:"E",subtipo:null,enaTipo:7},
+  {id:69,text:"Me gusta estar alegre, evitar las penas y el aburrimiento, aunque piensen que soy superficial.",tipo:"E",subtipo:null,enaTipo:7},
+  {id:70,text:"El tiempo es la oportunidad de poder hacer de todo.",tipo:"E",subtipo:null,enaTipo:7},
+  // TIPO 8
+  {id:71,text:"Protejo a quienes se encuentran bajo mi autoridad.",tipo:"E",subtipo:null,enaTipo:8},
+  {id:72,text:"Puedo luchar con convicción por lo que entiendo que es justo.",tipo:"E",subtipo:null,enaTipo:8},
+  {id:73,text:"Me gusta liderar, defender, luchar y proteger.",tipo:"E",subtipo:null,enaTipo:8},
+  {id:74,text:"Necesito vivir intensamente, sentir la adrenalina.",tipo:"E",subtipo:null,enaTipo:8},
+  {id:75,text:"Me gusta ser quien decide y defender a los que están conmigo, aunque tenga que enfrentar cualquier situación.",tipo:"E",subtipo:null,enaTipo:8},
+  {id:76,text:"Me molesta cuando no puedo imponerme, son situaciones que me desbordan.",tipo:"E",subtipo:null,enaTipo:8},
+  {id:77,text:"Me molesta que me manden.",tipo:"E",subtipo:null,enaTipo:8},
+  {id:78,text:"Jamás podría dar un paso al costado pensando que alguien pueda dirigir un grupo mejor que yo.",tipo:"E",subtipo:null,enaTipo:8},
+  {id:79,text:"Disfruto en el ejercicio del poder.",tipo:"E",subtipo:null,enaTipo:8},
+  {id:80,text:"No soporto a quien cambia de parecer en función de las conveniencias.",tipo:"E",subtipo:null,enaTipo:8},
+  // TIPO 9
+  {id:81,text:"No hay nada tan urgente que no pueda esperar hasta mañana.",tipo:"E",subtipo:null,enaTipo:9},
+  {id:82,text:"Tengo más propensión a resignarme que a luchar.",tipo:"E",subtipo:null,enaTipo:9},
+  {id:83,text:"Tiendo a quitar importancia a las cosas para que los demás se tranquilicen.",tipo:"E",subtipo:null,enaTipo:9},
+  {id:84,text:"Necesito tranquilidad, que nadie me apure, aunque mi calma pueda irritar a los demás.",tipo:"E",subtipo:null,enaTipo:9},
+  {id:85,text:"A veces soy complaciente, aunque piensen que no me juego por una posición.",tipo:"E",subtipo:null,enaTipo:9},
+  {id:86,text:"Me molestan que me presionen, prefiero gozar de la tranquilidad y comodidad.",tipo:"E",subtipo:null,enaTipo:9},
+  {id:87,text:"Aunque me guste sostener la armonía, si veo que no puedo mediar en el conflicto me retiro de la escena.",tipo:"E",subtipo:null,enaTipo:9},
+  {id:88,text:"Suelen acusarme de ser una persona apática, pasiva, abstraída de la realidad.",tipo:"E",subtipo:null,enaTipo:9},
+  {id:89,text:"Cuando los problemas agobian, lo mejor es no hacer nada.",tipo:"E",subtipo:null,enaTipo:9},
+  {id:90,text:"Me he inclinado a no imponerme ante los demás, evito entrar en conflictos.",tipo:"E",subtipo:null,enaTipo:9},
+  // SUBTIPOS ATA (27)
+  {id:91,text:"Mi nivel de exigencia se concentra principalmente en mi propio desempeño y en cómo administro mis recursos: tiempo, energía, dinero.",tipo:"ES",subtipo:"P",enaTipo:1},
+  {id:92,text:"Me preocupa especialmente que los estándares y procedimientos del grupo o la organización sean correctos y se cumplan.",tipo:"ES",subtipo:"N",enaTipo:1},
+  {id:93,text:"En mis relaciones cercanas soy especialmente crítico: me cuesta tolerar que quienes estimo no alcancen el nivel que considero correcto.",tipo:"ES",subtipo:"T",enaTipo:1},
+  {id:94,text:"Cuido a las personas de mi entorno inmediato de manera concreta: me anticipo a sus necesidades antes de que me las pidan.",tipo:"ES",subtipo:"P",enaTipo:2},
+  {id:95,text:"Necesito ser una figura importante y reconocida dentro de mi grupo; me esfuerzo para que los demás me consideren indispensable.",tipo:"ES",subtipo:"N",enaTipo:2},
+  {id:96,text:"Elijo a pocas personas con quienes establecer una relación de entrega total; en esos vínculos, mi energía es muy intensa.",tipo:"ES",subtipo:"T",enaTipo:2},
+  {id:97,text:"Mi imagen de éxito está muy ligada a resultados concretos: ingresos, productividad, logros tangibles que puedo medir.",tipo:"ES",subtipo:"P",enaTipo:3},
+  {id:98,text:"Me importa mucho el prestigio y el reconocimiento social: necesito que mi posición en la organización sea visible y valorada.",tipo:"ES",subtipo:"N",enaTipo:3},
+  {id:99,text:"Mi motivación principal es ser el referente de las personas que me importan; el éxito vale más cuando quienes admiro lo ven.",tipo:"ES",subtipo:"T",enaTipo:3},
+  {id:100,text:"Busco cubrir mis necesidades personales con una cierta intensidad: el placer, la estética y el bienestar propio son centrales en mi vida.",tipo:"ES",subtipo:"P",enaTipo:4},
+  {id:101,text:"Siento que pertenezco a un grupo cuando se reconoce mi singularidad; si me tratan como uno más, me desconecto.",tipo:"ES",subtipo:"N",enaTipo:4},
+  {id:102,text:"Mis vínculos más profundos son pocos pero muy intensos; espero de esas personas una conexión que muy pocos pueden sostener.",tipo:"ES",subtipo:"T",enaTipo:4},
+  {id:103,text:"Administro con cuidado mi tiempo, energía y recursos: necesito reservas propias para sentirme seguro antes de comprometerme.",tipo:"ES",subtipo:"P",enaTipo:5},
+  {id:104,text:"Prefiero participar en grupos donde puedo aportar desde el conocimiento; el rol de experto reconocido me da sentido de pertenencia.",tipo:"ES",subtipo:"N",enaTipo:5},
+  {id:105,text:"Con muy pocas personas logro una conexión real; en esos vínculos comparto lo que normalmente reservo para mí.",tipo:"ES",subtipo:"T",enaTipo:5},
+  {id:106,text:"Mi seguridad está ligada a tener todo bajo control: la rutina, el ahorro y la previsión me dan estabilidad emocional.",tipo:"ES",subtipo:"P",enaTipo:6},
+  {id:107,text:"Necesito sentirme parte de un grupo sólido y confiable; la lealtad al equipo y a las normas compartidas es mi principal sostén.",tipo:"ES",subtipo:"N",enaTipo:6},
+  {id:108,text:"Deposito mi confianza en pocas personas pero de manera profunda; cuando ese vínculo se rompe, me desestabiliza mucho.",tipo:"ES",subtipo:"T",enaTipo:6},
+  {id:109,text:"Busco activamente experiencias placenteras y variadas para mí mismo; el bienestar propio y los gustos personales son una prioridad.",tipo:"ES",subtipo:"P",enaTipo:7},
+  {id:110,text:"Me energiza ser el animador del grupo: generar entusiasmo colectivo, conectar personas y crear un clima positivo son mis fortalezas.",tipo:"ES",subtipo:"N",enaTipo:7},
+  {id:111,text:"Me fascina generar chispa en vínculos concretos: la conversación estimulante uno a uno me da más energía que cualquier reunión grupal.",tipo:"ES",subtipo:"T",enaTipo:7},
+  {id:112,text:"Mi energía se concentra en proteger lo mío: mis recursos, mi territorio y las personas bajo mi cuidado directo.",tipo:"ES",subtipo:"P",enaTipo:8},
+  {id:113,text:"Necesito tener un rol de liderazgo claro dentro del grupo; me resulta muy difícil operar sin autoridad o influencia reconocida.",tipo:"ES",subtipo:"N",enaTipo:8},
+  {id:114,text:"Elijo con quién me comprometo, pero cuando lo hago, la lealtad y la intensidad del vínculo son totales.",tipo:"ES",subtipo:"T",enaTipo:8},
+  {id:115,text:"Mi paz interior está ligada a la comodidad física y a la rutina: cuando mi entorno inmediato es estable, yo estoy bien.",tipo:"ES",subtipo:"P",enaTipo:9},
+  {id:116,text:"Me fusiono fácilmente con el grupo: adopto sus prioridades y agendas como propias para mantener la armonía colectiva.",tipo:"ES",subtipo:"N",enaTipo:9},
+  {id:117,text:"En mis vínculos más cercanos tiendo a disolverme en el otro: sus necesidades se vuelven más urgentes que las mías.",tipo:"ES",subtipo:"T",enaTipo:9},
+  // BLOQUE 2: DISC (48 preguntas)
+  {id:118,text:"Cuando hay un problema en mi equipo, tomo la delantera y decido rápido, aunque no tenga toda la información.",tipo:"D",discTipo:"D"},
+  {id:119,text:"Me incomoda perder tiempo en debates prolongados cuando la dirección ya está clara.",tipo:"D",discTipo:"D"},
+  {id:120,text:"Prefiero un conflicto directo antes que dejar pasar algo que está mal.",tipo:"D",discTipo:"D"},
+  {id:121,text:"Bajo presión, aumento la exigencia sobre mi equipo y sobre mí mismo.",tipo:"D",discTipo:"D"},
+  {id:122,text:"Me resulta natural asumir el mando en situaciones de crisis o incertidumbre.",tipo:"D",discTipo:"D"},
+  {id:123,text:"Me frustra trabajar con personas que evitan tomar decisiones o que esperan que otro las tome.",tipo:"D",discTipo:"D"},
+  {id:124,text:"Acepto el riesgo como parte del liderazgo; prefiero actuar y corregir sobre la marcha.",tipo:"D",discTipo:"D"},
+  {id:125,text:"Valoro los resultados por encima del proceso: lo importante es llegar.",tipo:"D",discTipo:"D"},
+  {id:126,text:"Si noto que alguien no está a la altura, lo digo directamente.",tipo:"D",discTipo:"D"},
+  {id:127,text:"Me siento más cómodo liderando que siguiendo instrucciones de otros.",tipo:"D",discTipo:"D"},
+  {id:128,text:"Una de mis fortalezas como líder es generar entusiasmo y motivar a las personas.",tipo:"D",discTipo:"I"},
+  {id:129,text:"Me resulta fácil conectar con personas nuevas y ganarme su confianza rápidamente.",tipo:"D",discTipo:"I"},
+  {id:130,text:"Prefiero reuniones donde haya intercambio, debate y energía antes que reportes fríos.",tipo:"D",discTipo:"I"},
+  {id:131,text:"Uso el humor y la cercanía como herramientas para distender tensiones en mi equipo.",tipo:"D",discTipo:"I"},
+  {id:132,text:"Me cuesta mantenerme en lo rutinario; necesito proyectos que me estimulen.",tipo:"D",discTipo:"I"},
+  {id:133,text:"Cuando presento una idea, me importa tanto el impacto emocional como el racional.",tipo:"D",discTipo:"I"},
+  {id:134,text:"Soy bueno para persuadir y generar aliados dentro y fuera de mi organización.",tipo:"D",discTipo:"I"},
+  {id:135,text:"Necesito que mi trabajo tenga visibilidad; el reconocimiento me impulsa.",tipo:"D",discTipo:"I"},
+  {id:136,text:"Me cuesta mantener el foco en los detalles cuando tengo varias ideas en simultáneo.",tipo:"D",discTipo:"I"},
+  {id:137,text:"Mi red de contactos y relaciones es uno de mis activos más valiosos como líder.",tipo:"D",discTipo:"I"},
+  {id:138,text:"Mi equipo sabe que puede contar conmigo; la confianza que genero es un valor que cuido.",tipo:"D",discTipo:"S"},
+  {id:139,text:"Antes de tomar una decisión que afecta a otros, busco escuchar las distintas perspectivas.",tipo:"D",discTipo:"S"},
+  {id:140,text:"Me incomodan los cambios abruptos o las decisiones tomadas sin proceso ni consulta.",tipo:"D",discTipo:"S"},
+  {id:141,text:"Prefiero construir equipos estables y cohesionados antes que equipos de alto rendimiento individual.",tipo:"D",discTipo:"S"},
+  {id:142,text:"Bajo presión, tiendo a calmarme y contener al equipo antes de reaccionar.",tipo:"D",discTipo:"S"},
+  {id:143,text:"Me cuesta decirle que no a alguien cuando sé que lo que pide es importante para él.",tipo:"D",discTipo:"S"},
+  {id:144,text:"La lealtad y el compromiso a largo plazo son más valiosos para mí que el talento sin pertenencia.",tipo:"D",discTipo:"S"},
+  {id:145,text:"Cuando hay conflicto en mi equipo, mi primera reacción es mediar antes que tomar partido.",tipo:"D",discTipo:"S"},
+  {id:146,text:"Me importa cómo se siente la gente con la que trabajo; el clima del equipo no es accesorio.",tipo:"D",discTipo:"S"},
+  {id:147,text:"Soy paciente con los procesos de aprendizaje; prefiero acompañar el desarrollo antes que exigir resultados inmediatos.",tipo:"D",discTipo:"S"},
+  {id:148,text:"Antes de actuar, necesito entender bien el problema; me incomoda decidir con información incompleta.",tipo:"D",discTipo:"C"},
+  {id:149,text:"Cuando reviso el trabajo de otros, suelo encontrar detalles que habían pasado por alto.",tipo:"D",discTipo:"C"},
+  {id:150,text:"Valoro los procesos, los estándares y las metodologías; son la base de la calidad.",tipo:"D",discTipo:"C"},
+  {id:151,text:"Me cuesta delegar tareas críticas porque sé exactamente cómo quiero que se hagan.",tipo:"D",discTipo:"C"},
+  {id:152,text:"Tomo decisiones con base en datos y análisis; la intuición sola no me basta.",tipo:"D",discTipo:"C"},
+  {id:153,text:"Me preparo exhaustivamente antes de una reunión o presentación importante.",tipo:"D",discTipo:"C"},
+  {id:154,text:"Me incomoda cuando se saltean pasos o se improvisa en situaciones que requieren rigor.",tipo:"D",discTipo:"C"},
+  {id:155,text:"Prefiero hacer bien pocas cosas antes que hacer muchas con calidad mediocre.",tipo:"D",discTipo:"C"},
+  {id:156,text:"Cuando doy feedback, soy específico y concreto; las generalidades no ayudan a nadie.",tipo:"D",discTipo:"C"},
+  {id:157,text:"Me resulta difícil bajar el estándar de calidad aunque el contexto lo pida.",tipo:"D",discTipo:"C"},
+  // DISC TIEMPO Y DELEGACIÓN
+  {id:158,text:"Me cuesta planificar con anticipación; prefiero reaccionar rápido ante lo que aparece antes que seguir un plan rígido.",tipo:"D",discTipo:"D"},
+  {id:159,text:"Cuando delego una tarea, me resulta difícil no intervenir si veo que el otro la haría de manera distinta a la mía.",tipo:"D",discTipo:"D"},
+  {id:160,text:"Me pasa con frecuencia que empiezo varios proyectos o iniciativas y me cuesta llevarlos todos hasta el final.",tipo:"D",discTipo:"I"},
+  {id:161,text:"Cuando delego, confío en que el otro va a resolverlo; el seguimiento detallado me resulta tedioso y lo evito.",tipo:"D",discTipo:"I"},
+  {id:162,text:"Muchas veces termino haciendo yo mismo algo que podría haber delegado para no sobrecargar o incomodar a mi equipo.",tipo:"D",discTipo:"S"},
+  {id:163,text:"Me cuesta hacer un seguimiento firme de los plazos cuando noto que la otra persona está bajo presión o atravesando un momento difícil.",tipo:"D",discTipo:"S"},
+  {id:164,text:"A veces la planificación me consume tanto tiempo que la ejecución queda postergada más de lo necesario.",tipo:"D",discTipo:"C"},
+  {id:165,text:"Me resulta difícil delegar tareas importantes si no estoy seguro de que la otra persona las va a hacer con el mismo nivel de detalle y calidad que yo.",tipo:"D",discTipo:"C"}
+];
+
+
+// ============================================================
+// MEZCLA INTELIGENTE DE PREGUNTAS
+// Garantiza que no haya más de 2 preguntas consecutivas del mismo grupo
+// ============================================================
+function shufflePreguntas(arr) {
+  // Separate into groups
+  const grupos = {};
+  arr.forEach(q => {
+    const key = q.tipo === 'E' ? 'E' + q.enaTipo :
+                q.tipo === 'ES' ? 'ES' + q.enaTipo :
+                'D' + q.discTipo;
+    if (!grupos[key]) grupos[key] = [];
+    grupos[key].push(q);
+  });
+
+  // Shuffle each group internally (Fisher-Yates)
+  Object.values(grupos).forEach(g => {
+    for (let i = g.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [g[i], g[j]] = [g[j], g[i]];
+    }
+  });
+
+  // Separate block 1 (Eneagrama E + ES) and block 2 (DISC D)
+  const bloque1Keys = Object.keys(grupos).filter(k => k.startsWith('E'));
+  const bloque2Keys = Object.keys(grupos).filter(k => k.startsWith('D'));
+
+  function interleave(keys) {
+    // Build pool from all groups in these keys
+    let pool = [];
+    keys.forEach(k => grupos[k].forEach(q => pool.push(q)));
+
+    // Interleave: pick from different groups round-robin style
+    // Sort groups by size descending for best distribution
+    let queues = keys.map(k => [...grupos[k]]).filter(g => g.length > 0);
+    queues.sort((a, b) => b.length - a.length);
+
+    const result = [];
+    let attempts = 0;
+    while (queues.some(q => q.length > 0)) {
+      attempts++;
+      if (attempts > 10000) break;
+      // Find queue whose last item type != last 2 result types
+      let placed = false;
+      for (let i = 0; i < queues.length; i++) {
+        if (queues[i].length === 0) continue;
+        const candidate = queues[i][0];
+        const candKey = candidate.tipo === 'E' ? 'E' + candidate.enaTipo :
+                        candidate.tipo === 'ES' ? 'ES' + candidate.enaTipo :
+                        'D' + candidate.discTipo;
+        const last1 = result.length > 0 ? getKey(result[result.length-1]) : null;
+        const last2 = result.length > 1 ? getKey(result[result.length-2]) : null;
+        // Allow if not same as last 2
+        if (candKey !== last1 || candKey !== last2) {
+          result.push(queues[i].shift());
+          // Remove empty queues and re-sort
+          queues = queues.filter(q => q.length > 0);
+          queues.sort((a, b) => b.length - a.length);
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        // Force pick largest queue to avoid infinite loop
+        result.push(queues[0].shift());
+        queues = queues.filter(q => q.length > 0);
+        queues.sort((a, b) => b.length - a.length);
+      }
+    }
+    return result;
+  }
+
+  function getKey(q) {
+    return q.tipo === 'E' ? 'E' + q.enaTipo :
+           q.tipo === 'ES' ? 'ES' + q.enaTipo :
+           'D' + q.discTipo;
+  }
+
+  const mezclado1 = interleave(bloque1Keys);
+  const mezclado2 = interleave(bloque2Keys);
+  return [...mezclado1, ...mezclado2];
+}
+
+// Aplicar mezcla al cargar
+const PREGUNTAS_MEZCLADAS = shufflePreguntas(PREGUNTAS);
+
+// ============================================================
+// DATOS DE TIPOS ENEAGRAMA
+// ============================================================
+const TIPOS_ENA = {
+  1: {
+    nombre: "El Perfeccionista",
+    estrategia: "Esfuerzo por sentirse correcto, justo e impecable",
+    subtipos: {
+      P: "Tu patrón instintivo orienta tu exigencia hacia adentro y hacia lo concreto: tu tiempo, tu energía, tu dinero, tu salud. Tu perfeccionismo aparece especialmente en cómo administrás lo tuyo. En el liderazgo, esto se traduce en un líder que predica con el ejemplo de manera casi compulsiva — siempre preparado, siempre puntual, siempre organizado. El riesgo es que ese modelo sea inalcanzable para la mayoría, y que termines acumulando responsabilidades que deberías distribuir porque creés que nadie más las va a hacer con el mismo cuidado.",
+      N: "Tu exigencia se orienta especialmente hacia los estándares y procedimientos del grupo o la organización. No tolerás que las normas se apliquen de manera inconsistente ni que el proceso se saltee. En el liderazgo, sos el guardián de la cultura y los valores institucionales — lo que le da a tu organización una coherencia real. El desafío es la rigidez: cuando las reglas se vuelven más importantes que el resultado, el equipo empieza a trabajar para el proceso y no para el propósito.",
+      T: "En tus relaciones cercanas sos especialmente crítico. Te cuesta tolerar que quienes estimas no alcancen el nivel que considerás correcto. Eso puede generar vínculos muy intensos y transformadores — o muy desgastantes, según cómo se gestione. En el liderazgo, depositás en pocas personas una confianza muy alta y una expectativa muy exigente. Cuando esas personas cumplen, la relación es extraordinaria. Cuando no, la decepción es profunda."
+    },
+    disc: {
+      D: { titulo: "Rigor con velocidad", texto: "Combinás la exigencia de tu patrón con la capacidad de decisión y acción directa. Eso produce un líder que no solo sabe lo que está bien — sino que lo implementa con determinación. Tu riesgo es la impaciencia con quienes no llegan a tu velocidad y a tu estándar al mismo tiempo. Bajo presión, podés aumentar tanto la exigencia que el equipo deja de arriesgar para no cometer errores delante tuyo." },
+      I: { titulo: "El perfeccionista que inspira", texto: "Combinás la exigencia con la energía para comunicarla. Podés transmitir tus estándares de una manera que motiva en lugar de presionar — y eso es escaso. Tu riesgo es la inconsistencia: cuando tu estado emocional está alto, inspirás; cuando no lo está, la crítica sale sin el envoltorio y el equipo lo resiente." },
+      S: { titulo: "La exigencia que cuida", texto: "Combinás el estándar alto con la paciencia para acompañar a las personas hasta que lleguen. Eso produce un líder que no abandona a nadie en el proceso de crecimiento — lo que genera una lealtad profunda. Tu riesgo es sostener demasiado tiempo situaciones que no funcionan para no generar conflicto." },
+      C: { titulo: "Cuando el rigor y el análisis se combinan", texto: "Tu perfil es uno de los más poderosos en términos de rigor y uno de los más desafiantes en términos de liderazgo de personas. Tenés razón con mucha frecuencia — el problema es que saberlo no siempre ayuda. Detectás el error antes que nadie, tenés el análisis para explicarlo y la convicción para no dejarlo pasar. Pero tu zona de alto riesgo es la gestión del talento: las personas no funcionan como sistemas." }
+    },
+    perfilDesc: "Sos un líder que construye sobre principios. Tu organización tiene estructura, criterios claros y estándares que la mayoría de tus colaboradores reconocen — aunque no siempre disfruten. Para vos liderar no es poder, es responsabilidad. Eso te da una integridad real que pocos líderes tienen.",
+    desafioDesc: "Tu vara interna — esa voz que dice 'esto podría estar mejor' — nunca se apaga. Y cuando no se apaga en vos, tampoco se apaga hacia afuera. Trabajar con vos puede sentirse como trabajar con un auditor permanente. La gente deja de arriesgar, de proponer, de equivocarse en público.",
+    crecimientoDesc: "Aprender a distinguir entre excelencia y perfeccionismo. El líder con tu perfil que más crece es el que aprende a soltar — no sus estándares, sino la necesidad de que todos los demás los compartan exactamente igual.",
+    fortalezas: ["Ética e integridad", "Rigor analítico", "Estándares altos", "Consistencia", "Anticipación de problemas", "Autodisciplina"],
+    desafios: ["Delegación real", "Gestión emocional del equipo", "Celebrar el progreso", "Tolerar la imperfección ajena", "Decidir con info incompleta", "Crear cultura de error seguro"],
+    reflexiones: [
+      "¿Cuándo fue la última vez que tu equipo te trajo una idea nueva, sin que vos la pidieras? ¿Qué creés que hace que pase — o que no pase?",
+      "Pensá en alguien de tu equipo a quien hayas corregido más de una vez por la misma cosa. ¿Qué parte de ese ciclo depende de él y qué parte depende de cómo estás delegando?",
+      "¿Cuándo fue la última vez que algo salió bien y lo celebraste sin agregar un 'pero'?",
+      "Si tu equipo tuviera que describir cómo es trabajar con vos en un día difícil, ¿qué crees que dirían?",
+      "¿Hay alguna decisión que estés postergando porque ninguna opción te parece suficientemente buena?",
+      "¿En tu organización la gente trae los errores a la mesa o los esconde? ¿Qué parte de esa respuesta tiene que ver con cómo reaccionás vos?"
+    ],
+    coach: {
+      notas: ["El líder con este patrón suele llegar al coaching con una queja sobre el equipo, no sobre sí mismo. La primera tarea es redirigir la mirada hacia su patrón de exigencia.", "Su crítica hacia otros es proyección de su crítica interna. Trabajar la voz del crítico interior es clave.", "Resistirá el feedback suave. Prefiere que le digan las cosas directamente, con fundamentos."],
+      preguntas: ["¿Qué pasaría si el resultado fuera un 8 sobre 10 en lugar de un 10?", "¿Podés identificar cuándo tu exigencia protege al equipo y cuándo lo paraliza?", "¿Qué es lo primero que notás cuando alguien de tu equipo comete un error?"],
+      ciegos: ["Cree que su rigor es motivación para los demás, cuando frecuentemente es fuente de angustia.", "No ve que su necesidad de control bloquea el desarrollo de las personas a su cargo.", "Confunde sus opiniones con hechos objetivos."]
+    }
+  },
+  2: {
+    nombre: "El Colaborador",
+    estrategia: "Esfuerzo por sentirse necesario, querido y conectado",
+    subtipos: {
+      P: "Tu generosidad se concentra en las personas más cercanas. Sos el líder que se anticipa a las necesidades concretas — llegás con la solución antes de que te pidan ayuda. Eso genera lealtad muy profunda en tu círculo, pero puede crear dependencia que frena el desarrollo autónomo de quienes más querés. Tu trampa: hacés tanto por los que tenés cerca que terminás agotado y resentido cuando no recibís el mismo nivel de atención de vuelta.",
+      N: "Tu necesidad de conexión se orienta hacia el grupo amplio. Querés ser la figura clave, el referente afectivo, el que todos buscan. Tenés una capacidad notable para leer la dinámica grupal y ubicarte en ella estratégicamente. El riesgo es que tu generosidad tenga una agenda implícita: das para que te necesiten, ayudás para que te valoren. No lo hacés con malicia — es un patrón automático.",
+      T: "Tu energía de conexión va hacia pocas personas pero con una intensidad muy alta. Sos el líder que genera relaciones profundas y transformadoras. El desafío es la exclusividad: podés generar sin querer una dinámica de favoritos que fragmenta al equipo. Y cuando alguien en quien invertiste mucho no responde como esperabas, el golpe es muy duro."
+    },
+    disc: {
+      D: { titulo: "El líder que cuida y también empuja", texto: "Combinás calidez con capacidad de confrontación — eso produce un líder que puede ser afectuoso y directo en la misma conversación. Tu riesgo es usar la cercanía como herramienta de influencia para conseguir lo que querés. Cuando alguien siente que tu afecto tiene condiciones, la confianza se erosiona rápido." },
+      I: { titulo: "El líder carismático que conecta con todos", texto: "Tenés la calidez del cuidado y la energía del entusiasmo — la gente quiere estar cerca de vos. Tu riesgo es la superficie: podés quedarte en vínculos amplios sin construir la confianza real que el liderazgo de largo plazo requiere." },
+      S: { titulo: "El líder contenedor por excelencia", texto: "Combinás empatía con paciencia real. En momentos de crisis, tu equipo sabe que puede ir a vos y que vas a estar. El riesgo es que tanta contención se convierta en cobertura del problema en lugar de resolución." },
+      C: { titulo: "El líder que cuida con criterio", texto: "La calidez de tu patrón se combina con rigor analítico — eso produce un líder que genuinamente se preocupa por las personas y además tiene criterio para ayudarlas a crecer de verdad. Tu tensión: a veces sabés lo que hay que decirle a alguien pero el vínculo te frena." }
+    },
+    perfilDesc: "Sos un líder que construye desde el vínculo. Tu capacidad para leer a las personas, anticipar lo que necesitan y crear un clima de confianza es genuina y valiosa. Tu equipo siente que te importa — y eso no es menor.",
+    desafioDesc: "Cuando ayudar deja de ser un acto libre y se convierte en la forma en que comprás tu lugar en el equipo, cuando no podés decir que no sin sentirte mal — ahí, sin darte cuenta, dejás de liderar y empezás a gestionar desde el afecto.",
+    crecimientoDesc: "Aprender a separar el vínculo del rol. Podés querer genuinamente a tu equipo y al mismo tiempo exigirles, confrontarlos y tomar decisiones que los incomoden. El cuidado más profundo no es proteger a alguien del malestar — es acompañarlo a través de él.",
+    fortalezas: ["Empatía genuina", "Construcción de vínculos", "Lectura de personas", "Lealtad del equipo", "Clima organizacional"],
+    desafios: ["Límites claros", "Feedback difícil", "Decisiones impopulares", "Delegación sin control", "Gestión por criterio no por afecto"],
+    reflexiones: [
+      "¿Hay alguien en tu equipo cuyo bajo rendimiento estás tolerando hace tiempo? ¿Qué te impide tener esa conversación?",
+      "¿Cuándo fue la última vez que pediste algo para vos — sin justificarlo con las necesidades del equipo?",
+      "Pensá en una decisión difícil que postergaste porque ibas a incomodar a alguien. ¿Qué costó esa postergación?",
+      "¿Hay personas en tu equipo que podrían hacer más pero vos seguís haciendo cosas por ellas?",
+      "¿Cuándo fue la última vez que alguien de tu equipo te dijo algo que no querías escuchar? ¿Cómo lo recibiste?",
+      "¿Qué pasaría en tu organización si dejaras de ser el sostén emocional del equipo por un tiempo?"
+    ],
+    coach: {
+      notas: ["Frecuentemente no sabe lo que necesita porque nunca se lo preguntó. Ejercicios de identificación de necesidades propias son esenciales.", "Su generosidad puede ser una estrategia de control. Explorar la diferencia entre dar libremente y dar para recibir.", "Reacciona muy bien al reconocimiento genuino antes de cualquier intervención."],
+      preguntas: ["¿Qué necesitás vos de este proceso, más allá de lo que necesitan los demás?", "¿Cuándo fue la última vez que pediste ayuda sin sentirte mal por eso?", "¿Podés identificar situaciones donde tu ayuda no fue pedida y generó conflicto?"],
+      ciegos: ["Cree que sabe lo que los demás necesitan mejor que ellos mismos.", "No ve cómo su apoyo incondicional puede crear dependencia en el equipo.", "Confunde el rol de líder con el rol de cuidador."]
+    }
+  },
+  3: {
+    nombre: "El Triunfador",
+    estrategia: "Esfuerzo por destacarse, lograr y proyectar una imagen de éxito",
+    subtipos: {
+      P: "Tu imagen de éxito es concreta y material: ingresos, productividad, logros tangibles que podés medir. No te interesa tanto el reconocimiento público como tener los números que confirmen que lo estás haciendo bien. Sos el más discreto de tu patrón — trabajás mucho, producís mucho y no necesitás que todos lo vean. Tu trampa: podés volverte tan orientado al rendimiento propio que perdés de vista el desarrollo de tu equipo.",
+      N: "El reconocimiento social es parte central de tu motivación. No alcanza con lograr — necesitás que los demás vean que lograste. Tu posición en la jerarquía, tu reputación y tu imagen pública son variables que gestionás activamente. Eso te hace muy efectivo en ventas, desarrollo de negocios y representación institucional. El riesgo: que la gestión de imagen consuma energía que debería ir al liderazgo real.",
+      T: "Tu motivación más profunda es ser el mejor a los ojos de las personas específicas que más valorás. Cuando esas personas te reconocen, sentís que el esfuerzo valió. Eso te hace muy efectivo cuando hay una figura de autoridad clara. El desafío: cuando tenés que liderar sin esa referencia externa — cuando el éxito depende de tu propio criterio sin validación."
+    },
+    disc: {
+      D: { titulo: "El líder que gana — siempre", texto: "Combinás orientación al logro con capacidad de decisión y confrontación. Cuando querés algo, vas por ello con una claridad que pocas personas pueden sostener. Tu punto ciego es el equipo: en tu cabeza el mejor servicio es mostrarle el camino más rápido al resultado — pero las personas no son rutas." },
+      I: { titulo: "El líder que vende la visión", texto: "Sabés leer a la audiencia, ajustar el mensaje y hacer que la gente quiera seguirte. Sos efectivo en la sala de directorio y en el discurso de cierre. El desafío: cuando la energía y el carisma son muy altos puede haber tendencia a prometer más de lo que se puede entregar." },
+      S: { titulo: "El líder que logra sin perder al equipo", texto: "La orientación al logro se modera con paciencia — eso produce un líder que sabe a dónde va y también espera que el equipo llegue con él. Tu tensión: entre la urgencia del resultado y la necesidad de que todos estén bien." },
+      C: { titulo: "El líder que llega y llega bien", texto: "No solo querés ganar — querés entender exactamente por qué ganaste para poder repetirlo. Eso te da solidez estratégica real. El riesgo: parálisis entre la urgencia de actuar y el rigor de analizar." }
+    },
+    perfilDesc: "Sos un líder que hace que las cosas sucedan. Tu capacidad para ponerte objetivos, diseñar el camino y movilizar recursos hacia el resultado es una de las más poderosas que puede tener un líder. Donde otros ven obstáculos, vos ves variables a gestionar.",
+    desafioDesc: "El desafío está en quién sos cuando no estás logrando. Tu identidad está construida sobre el hacer y el lograr — y cuando eso falla, aparece una incomodidad profunda que no siempre sabés nombrar.",
+    crecimientoDesc: "Separar tu valor como persona de tu valor como productor de resultados. El líder con tu perfil que más crece es el que aprende a estar presente en el proceso, no solo en el resultado.",
+    fortalezas: ["Orientación al logro", "Energía e iniciativa", "Visión clara", "Capacidad de ejecución", "Adaptabilidad"],
+    desafios: ["Presencia en el proceso", "Gestión emocional propia", "Mostrar vulnerabilidad", "Desarrollo de personas", "Procesar el fracaso"],
+    reflexiones: [
+      "¿Quién en tu equipo tiene potencial real que no estás desarrollando porque no produce lo suficiente todavía?",
+      "Pensá en un fracaso reciente. ¿Lo procesaste o lo dejaste atrás rápido? ¿Qué aprendizaje quedó en el equipo?",
+      "¿Cuándo fue la última vez que le mostraste a tu equipo que no sabías algo o que algo te costaba?",
+      "¿Hay alguna relación en tu organización que descuidaste porque esa persona no impactaba directamente en tus resultados?",
+      "Si no pudieras mostrar ningún resultado por los próximos seis meses, ¿desde dónde liderarías?",
+      "¿Tu equipo trabaja a este ritmo porque quiere o porque siente que no puede bajar la velocidad?"
+    ],
+    coach: {
+      notas: ["Llega al coaching con objetivos muy claros pero poco contacto con sus emociones. No presionar emocionalmente al inicio.", "Su mayor vulnerabilidad es el miedo al fracaso. Un error percibido puede paralizar el proceso.", "Responde bien a metodologías con fases, métricas y resultados visibles."],
+      preguntas: ["¿Qué lograrías si supieras que nadie te está mirando?", "¿Qué parte de tu identidad está más allá de lo que hacés o lográs?", "¿Cuándo fue la última vez que te permitiste no saber cómo hacer algo?"],
+      ciegos: ["No ve cuánto de lo que hace está orientado a la imagen más que al propósito.", "Cree que su equipo está motivado cuando en realidad está agotado.", "Confunde velocidad con eficiencia y actividad con progreso."]
+    }
+  },
+  4: {
+    nombre: "El Individualista",
+    estrategia: "Esfuerzo por sentirse único, auténtico y profundamente comprendido",
+    subtipos: {
+      P: "Tu singularidad se expresa principalmente en el plano personal: cómo vivís, qué consumís, qué experiencias buscás. El placer estético y la autenticidad cotidiana son centrales. En el liderazgo, esto aparece como un estándar alto sobre la calidad de tu propia experiencia de trabajo. Si el contexto no te estimula, si el proyecto no te conecta — tu rendimiento cae antes de que entiendas por qué.",
+      N: "Necesitás que el grupo vea tu singularidad. No querés ser uno más — querés ser el que aporta algo que nadie más puede aportar. El riesgo: cuando el grupo no reconoce esa singularidad, te desconectás. Podés sabotear inconscientemente tu propia pertenencia antes de permitir que te hagan sentir ordinario.",
+      T: "Tus vínculos más profundos son pocos pero de una intensidad que pocas personas pueden sostener. Cuando te conectás con alguien de verdad, esa relación deja huella. El desafío: esa expectativa de profundidad puede ser agotadora para el otro, y cuando el vínculo no llega al nivel que buscás, la decepción es grande."
+    },
+    disc: {
+      D: { titulo: "Visión profunda con capacidad de ejecución", texto: "Cuando tu perfil se orienta a la acción, combinás profundidad de visión con capacidad de movimiento. Podés ir de la idea más abstracta a la decisión concreta con velocidad que sorprende. Tu riesgo: impaciencia con quienes no llegan a tu velocidad emocional e intelectual." },
+      I: { titulo: "El líder que crea cultura desde la emoción", texto: "Tenés la profundidad para conectar y la energía para inspirar. Cuando estás en esta zona, sos extraordinariamente magnético. El desafío: el proceso de convertir visión en resultado requiere consistencia que no siempre está disponible cuando tu energía emocional está en otro lugar." },
+      S: { titulo: "Profundidad con calma", texto: "Combinás sensibilidad con paciencia real. Podés acompañar a las personas en procesos lentos y difíciles. Tu riesgo: la absorción emocional — tomás el estado del equipo como propio y cuando hay sufrimiento colectivo te cuesta mantener la perspectiva." },
+      C: { titulo: "El perfeccionista creativo", texto: "No aceptás lo mediocre — ni en los resultados ni en las ideas. Eso genera proyectos con nivel de elaboración que otros no alcanzan. El riesgo: la parálisis cuando nada es suficientemente bueno para salir." }
+    },
+    perfilDesc: "Sos un líder con una profundidad y autenticidad que pocos tienen. Tu capacidad para crear desde la singularidad y conectar emocionalmente con las personas es un diferencial real. En un mundo de líderes intercambiables, vos dejás huella.",
+    desafioDesc: "Tu mundo interno es tan rico e intenso que a veces absorbe más energía de la que queda disponible para liderar. Cuando esa intensidad no tiene cauce, puede convertirse en inestabilidad que el equipo percibe sin entender.",
+    crecimientoDesc: "Aprender a liderar también desde los días grises. El líder con tu perfil que más crece es el que aprende a separar su estado emocional de su presencia como líder — que construye estructura como soporte para que su visión pueda aterrizar.",
+    fortalezas: ["Autenticidad", "Profundidad emocional", "Creatividad", "Visión singular", "Construcción de cultura"],
+    desafios: ["Consistencia emocional", "Ejecución rutinaria", "Presencia en días grises", "Gestión de la intensidad", "Terminar lo que se empieza"],
+    reflexiones: [
+      "¿Tu equipo sabe qué esperar de vos cuando estás en un momento difícil? ¿Cómo los preparás para esas etapas?",
+      "¿Hay algún proyecto que no terminaste porque perdió la chispa inicial? ¿Qué le costó eso a tu organización?",
+      "¿Quién en tu equipo es el más distinto a vos en sensibilidad y estilo? ¿Cómo es tu relación con esa persona?",
+      "¿Cuándo fue la última vez que sostuviste algo aburrido o rutinario hasta el final?",
+      "¿Hay algo que tu equipo necesita de vos en términos de consistencia que no estás dando?",
+      "Si tu mejor versión como líder pudiera hablarle a la versión que opera desde el pozo, ¿qué le diría?"
+    ],
+    coach: {
+      notas: ["Necesita sentir que el proceso de coaching es único y personalizado para él. No tolera lo genérico.", "Su volatilidad emocional puede interrumpir el proceso. La regulación emocional es prioritaria.", "Puede usar su profundidad como resistencia. El insight sin acción es su trampa principal."],
+      preguntas: ["¿Qué pasaría si lo que sentís no fuera la verdad más importante de la situación?", "¿Podés identificar cuándo tu singularidad te conecta con el equipo y cuándo te aísla?", "¿Qué acción concreta podés tomar hoy, aunque no te inspire?"],
+      ciegos: ["Cree que su sufrimiento lo hace más profundo o más auténtico.", "No ve cómo su foco en lo que falta le impide ver lo que tiene.", "Su necesidad de ser visto como único puede generar distancia con el equipo."]
+    }
+  },
+  5: {
+    nombre: "El Investigador",
+    estrategia: "Esfuerzo por entender, observar y preservar la autonomía",
+    subtipos: {
+      P: "Administrás tu tiempo, energía y atención con precisión. Sabés exactamente cuánto tenés disponible y no comprometés más de lo que podés sostener. Eso te da consistencia real — cuando decís que vas a hacer algo, lo hacés. En el liderazgo, tu equipo aprende que necesita agendar para accederte — y eso, a largo plazo, puede crear una distancia que no querés pero que vos mismo construiste.",
+      N: "Tu sentido de pertenencia grupal está mediado por el conocimiento. Te sentís parte de un equipo cuando podés contribuir desde tu expertise. Ahí sos generoso, presente y extraordinariamente valioso. El desafío: cuando tenés que participar del grupo desde lo emocional o lo social, esas instancias te agotan y tendés a evitarlas.",
+      T: "Con muy pocas personas lográs una conexión de profundidad y lealtad excepcionales. Con esas personas compartís lo que normalmente reservás para vos. El desafío: esa selectividad puede crear percepción de favoritismo para el resto. Y cuando uno de esos vínculos se daña, el impacto en vos es desproporcionado."
+    },
+    disc: {
+      D: { titulo: "Análisis que se convierte en movimiento", texto: "Cuando tenés el diagnóstico, podés ser muy directo y rápido. El desafío: comunicar tu proceso al equipo. 'Estoy analizando, en 48hs tengo una posición' es muy diferente a desaparecer sin explicación." },
+      I: { titulo: "El mentor que transforma desde el conocimiento", texto: "Tenés profundidad analítica y capacidad de conectar — cuando se alinean, podés transformar a alguien con una conversación. El desafío: ese nivel de conexión lo podés sostener con pocas personas. Para liderar equipos amplios necesitás sistemas que multipliquen tu impacto." },
+      S: { titulo: "El líder que da espacio para crecer", texto: "No microgestjonás, no presionás, dejás que las personas encuentren su camino. Eso crea desarrollo genuino. El riesgo: hay colaboradores que necesitan más presencia y dirección. Para ellos tu estilo puede sentirse como abandono disfrazado de autonomía." },
+      C: { titulo: "El estratega riguroso", texto: "Combinás profundidad analítica con estándares altos — lo que produce estrategias de una calidad que pocas organizaciones alcanzan. El riesgo: la parálisis y el aislamiento. Cuando ambas fuerzas van hacia adentro, podés perfeccionar algo durante meses que el mercado necesitaba hace tiempo." }
+    },
+    perfilDesc: "Sos un líder que piensa antes de hablar, que analiza antes de actuar y que rara vez dice algo que no pueda sostener. Tu claridad conceptual, tu capacidad de ver el sistema completo y tu independencia de criterio son activos estratégicos reales.",
+    desafioDesc: "Tu zona de confort está en el pensamiento, no en la acción. Podés tener el análisis más sólido de la sala y al mismo tiempo ser el que menos se expone, menos conecta y menos moviliza. El liderazgo requiere presencia — y la presencia requiere salir del observatorio.",
+    crecimientoDesc: "Aprender que el conocimiento que no se comparte no transforma. El líder con tu perfil que más crece es el que aprende a estar presente sin tener el análisis completo.",
+    fortalezas: ["Pensamiento estratégico", "Rigor analítico", "Independencia de criterio", "Respeto por la autonomía", "Profundidad conceptual"],
+    desafios: ["Presencia emocional", "Decisión con info incompleta", "Disponibilidad para el equipo", "Comunicar el proceso interno", "Reconocimiento y celebración"],
+    reflexiones: [
+      "¿Tu equipo sabe en qué estás trabajando y por qué? ¿Con qué frecuencia compartís tu proceso de pensamiento?",
+      "¿Hay alguna decisión que postergaste esperando tener más información? ¿Cuánto te costó esa demora?",
+      "¿Cuándo fue la última vez que celebraste algo con tu equipo — no solo lo anunciaste?",
+      "¿Hay alguien en tu equipo que te busca y vos tendés a no estar disponible?",
+      "¿Tenés conocimiento que no estás compartiendo porque no está listo? ¿Qué te impide compartirlo en proceso?",
+      "¿Qué parte de tu rol como líder te resulta más agotadora? ¿Qué te dice eso sobre lo que estás evitando?"
+    ],
+    coach: {
+      notas: ["Necesita tiempo para procesar. No presionar por respuestas inmediatas en sesión.", "Su defensa es la intelectualización. Llevar la conversación al cuerpo y las emociones es trabajo clave.", "Responde bien a marcos teóricos sólidos."],
+      preguntas: ["¿Qué sabés que no estás usando por no querer exponerte?", "¿Qué necesitaría pasar para que actúes con la información que ya tenés?", "¿Cuándo tu análisis te protege y cuándo te detiene?"],
+      ciegos: ["Cree que necesita más información cuando en realidad tiene miedo de comprometerse.", "No ve el impacto de su distancia en la motivación del equipo.", "Confunde reserva con objetividad."]
+    }
+  },
+  6: {
+    nombre: "El Leal",
+    estrategia: "Esfuerzo por sentirse seguro, respaldado y confiable",
+    subtipos: {
+      P: "Tu necesidad de seguridad se expresa en el control de las variables concretas de tu vida: finanzas, rutina, entorno inmediato. Tenés reservas — de dinero, tiempo, energía — porque la imprevisión te genera ansiedad. En el liderazgo, esto aparece como dificultad para operar en contextos de alta incertidumbre. Cuando no hay colchón, tu rendimiento se resiente antes de que el problema sea real.",
+      N: "Tu seguridad viene del grupo. Necesitás sentirte parte de algo sólido donde las reglas sean claras y la lealtad recíproca. Cuando ese grupo existe, sos extraordinariamente comprometido. El desafío: cuando las normas del grupo entran en conflicto con tu criterio propio, la presión por pertenecer puede hacerte sostener posiciones que en privado cuestionás.",
+      T: "Depositás tu confianza en muy pocas personas pero de manera profunda y total. Esos vínculos son tu red de seguridad real. El riesgo: cuando esos vínculos se dañan, el impacto es desproporcionado. Y la exigencia de lealtad absoluta puede ser difícil de sostener para el otro."
+    },
+    disc: {
+      D: { titulo: "Determinación con red de seguridad", texto: "Podés ser muy decisivo — pero necesitás haber construido confianza en el equipo antes de actuar con esa velocidad. Tu mayor fortaleza: la capacidad de confrontar cuando algo amenaza al equipo, muy directo defendiendo lo que considerás correcto." },
+      I: { titulo: "El líder que construye tribu", texto: "Combinás lealtad profunda con energía para convocar — eso produce equipos con cohesión y compromiso que pocas organizaciones logran. El desafío: tu tribu puede volverse cerrada. Muy sólida hacia adentro, muy resistente a lo nuevo." },
+      S: { titulo: "El líder más confiable del ecosistema", texto: "La lealtad combinada con paciencia produce un líder que las personas buscan en los momentos difíciles. Saben que vas a estar y que podés sostener la incertidumbre sin desmoronarte. Tu riesgo: tanto vos como tu equipo pueden volverse tan cómodos en la estabilidad que el cambio necesario se posterga." },
+      C: { titulo: "El auditor del riesgo organizacional", texto: "Combinás tu antena para las amenazas con capacidad analítica para cuantificarlas. Las organizaciones complejas te necesitan. El riesgo: la parálisis por análisis del riesgo. Podés encontrar tantas amenazas potenciales que la acción se vuelve imposible." }
+    },
+    perfilDesc: "Sos un líder que genera confianza real. Tu equipo sabe que podés contar con vos — que cumplís, que no abandonás en los momentos difíciles, que tu lealtad no es de marketing. También tenés una capacidad genuina para anticipar riesgos que otros no ven.",
+    desafioDesc: "Esa misma antena para el peligro puede convertirse en una fuente de ansiedad que contamina al equipo. Cuando el líder anticipa amenazas constantemente, el equipo empieza a moverse desde el miedo en lugar de desde la confianza.",
+    crecimientoDesc: "Aprender a confiar en tu propio criterio antes de buscar validación externa. El líder con tu perfil que más crece aprende a distinguir entre precaución inteligente y miedo disfrazado de prudencia.",
+    fortalezas: ["Lealtad genuina", "Anticipación de riesgos", "Construcción de confianza", "Consistencia", "Cuidado del equipo"],
+    desafios: ["Confianza en el criterio propio", "Tolerancia a la incertidumbre", "Apertura a lo nuevo", "Decisión sin validación externa", "Gestión del miedo anticipatorio"],
+    reflexiones: [
+      "¿Cuándo fue la última vez que tomaste una decisión importante sin buscar validación de alguien más?",
+      "¿Hay alguna oportunidad que no tomaste porque el nivel de incertidumbre era demasiado alto?",
+      "¿Tu equipo te percibe como alguien que confía en ellos o como alguien que los cuida pero no los suelta?",
+      "Pensá en alguien en quien no confiás. ¿Qué parte de esa desconfianza es basada en evidencia y qué parte es anticipación?",
+      "¿Hay algo que tu equipo necesita que cambies y vos no estás cambiando porque te genera demasiada incertidumbre?",
+      "¿Cuándo confiás en vos mismo sin necesitar que nadie más te lo confirme?"
+    ],
+    coach: {
+      notas: ["Puede testear al coach antes de confiar. La consistencia y transparencia son esenciales desde el primer encuentro.", "Su mente trabaja en escenarios de worst-case. Trabajar la diferencia entre precaución funcional y catastrofización.", "Necesita sentir que el espacio es seguro antes de mostrar vulnerabilidad real."],
+      preguntas: ["¿Qué es lo peor que podría pasar si tomás esa decisión? ¿Y qué probabilidad real tiene?", "¿Cuándo confiás en vos mismo sin necesitar validación externa?", "¿Qué diferencia hay entre ser cuidadoso y estar paralizado por el miedo?"],
+      ciegos: ["Cree que su desconfianza lo protege, cuando frecuentemente lo aísla.", "No ve cómo su necesidad de consenso puede ralentizar al equipo.", "Confunde lealtad al grupo con falta de criterio propio."]
+    }
+  },
+  7: {
+    nombre: "El Entusiasta",
+    estrategia: "Esfuerzo por sentirse estimulado, libre y alejado del dolor",
+    subtipos: {
+      P: "Tu energía se orienta hacia el disfrute personal y la variedad de experiencias. Sos el líder que come bien, viaja, prueba cosas nuevas, cuida su calidad de vida con entusiasmo. En el liderazgo, esto aparece como dificultad para sostener el sacrificio que requieren los proyectos de largo plazo. Cuando el trabajo deja de ser placentero, tu mente busca la salida.",
+      N: "Tu energía se orienta naturalmente hacia el grupo. Sos el que conecta personas, genera redes, crea el clima positivo. En eventos, lanzamientos, reuniones de equipo — tu presencia eleva el tono. El desafío: esa energía grupal puede volverse una forma de evitar la profundidad. Siempre hay algo que organizar, alguien a quien conectar — y nunca hay que quedarse solo con lo que no funciona.",
+      T: "Tu energía se expresa en la intensidad de las conversaciones individuales. Sos extraordinario en el cara a cara: generás conexión rápido, hacés preguntas que nadie más hace. El desafío: la continuidad. La chispa del primer encuentro es alta — el seguimiento sostenido, no tanto."
+    },
+    disc: {
+      D: { titulo: "Velocidad, visión y mucho movimiento", texto: "Tomás decisiones rápido, te movés rápido, cambiás de dirección rápido. En entornos que requieren agilidad e innovación, eso es ventaja real. Tu punto ciego: el equipo que queda atrás. No todo el mundo puede operar a tu velocidad." },
+      I: { titulo: "El visionario que mueve masas", texto: "Esta es tu combinación más natural. Tenés energía para inspirar y capacidad de conexión emocional. Cuando se alinean, podés mover organizaciones enteras. El desafío: la sustancia detrás del entusiasmo. El liderazgo inspirador sin estructura se convierte en carisma vacío." },
+      S: { titulo: "Entusiasmo con raíces", texto: "La paciencia del perfil estable actúa como ancla — te ayuda a quedarte cuando las cosas se ponen lentas. Cuando funciona bien, producís liderazgo que inspira y sostiene al mismo tiempo. Tu tensión: entre el impulso hacia lo nuevo y la lealtad al proceso en curso." },
+      C: { titulo: "La visión con rigor", texto: "Tu capacidad para ver posibilidades se combina con rigor analítico. Podés ser el líder que imagina Y que demuestra por qué funciona. La tensión: entre la velocidad de tu intuición y la lentitud del análisis." }
+    },
+    perfilDesc: "Sos un líder que enciende a las personas. Tu energía, tu capacidad para ver posibilidades donde otros ven paredes y tu entusiasmo genuino generan un tipo de tracción que muy pocos líderes pueden crear.",
+    desafioDesc: "La distancia entre el arranque y el final. Sos extraordinario en los comienzos. El problema aparece cuando el proyecto entra en la ejecución rutinaria. Ahí, sin darte cuenta, tu atención ya está en la próxima idea.",
+    crecimientoDesc: "Aprender que la profundidad también es estimulante. Que terminar algo bien genera una satisfacción que el próximo comienzo no puede darte. El líder con tu perfil que más crece aprende a distinguir entre optimismo genuino y evitación del malestar.",
+    fortalezas: ["Energía e inspiración", "Visión de posibilidades", "Creatividad", "Capacidad de motivar", "Adaptabilidad"],
+    desafios: ["Terminar lo que se empieza", "Feedback difícil", "Tolerar la rutina", "Procesar el malestar", "Seguimiento sistemático"],
+    reflexiones: [
+      "¿Cuántos proyectos tenés abiertos hoy que empezaste con entusiasmo y que ahora están a medias?",
+      "¿Hay una conversación difícil que venís posponiendo con alguien de tu equipo?",
+      "Pensá en un fracaso reciente. ¿Lo procesaste en profundidad o pasaste a la siguiente idea antes de que el aprendizaje pudiera asentarse?",
+      "¿Tu equipo sabe cuáles son las tres prioridades no negociables de este trimestre? ¿Las sostenés vos mismo?",
+      "¿Cuándo fue la última vez que te quedaste con algo incómodo el tiempo suficiente para que se resolviera de verdad?",
+      "Si tu equipo tuviera que describir tu estilo en una palabra, ¿qué dirían? ¿Es lo que querés que digan?"
+    ],
+    coach: {
+      notas: ["Puede usar el coaching como otra experiencia estimulante sin comprometerse con el cambio real.", "Su estrategia de escape es la reencuadración positiva. Trabajar la capacidad de sostener la incomodidad.", "Funciona mejor con compromisos concretos, cortos y verificables."],
+      preguntas: ["¿Qué estás evitando cuando te lanzás a la próxima idea?", "¿Cuándo fue la última vez que terminaste algo que se puso difícil?", "¿Qué perdés cuando saltás de proyecto en proyecto?"],
+      ciegos: ["Cree que su optimismo es liderazgo cuando a veces es negación.", "No ve el costo que su dispersión tiene en el equipo.", "Confunde estimulación con propósito."]
+    }
+  },
+  8: {
+    nombre: "El Desafiador",
+    estrategia: "Esfuerzo por sentirse fuerte, en control y nunca vulnerable",
+    subtipos: {
+      P: "Tu energía se concentra en proteger lo tuyo: recursos, espacio, autonomía y las personas bajo tu cuidado directo. Tenés límites muy claros y los defendés con determinación que nadie cuestiona dos veces. En el liderazgo, esto aparece como estilo territorial — tu área funciona bien. El desafío: la colaboración transversal, cuando tenés que ceder control o compartir recursos.",
+      N: "Necesitás que tu rol de liderazgo sea claro, visible y reconocido. Operar sin autoridad formal te resulta muy difícil. Cuando ese poder está, sos extraordinariamente efectivo. El desafío: cuando tu poder es cuestionado o tenés que operar en estructuras donde el poder es ambiguo, tu respuesta puede ser más intensa de lo que la situación requiere.",
+      T: "Cuando elegís a alguien, el compromiso es total. Esos vínculos son profundos, leales y duraderos — las personas en tu círculo tienen un defensor incondicional. El desafío: exigís la misma lealtad que das. La traición, real o percibida, es lo que más te desestabiliza como líder."
+    },
+    disc: {
+      D: { titulo: "Fuerza pura orientada al resultado", texto: "Esta es tu combinación más natural. Tenés determinación para ir por lo que querés y capacidad de decisión sin dudar. En crisis o turnaround, este perfil gana. Tu punto ciego: el equipo humano. El riesgo de tratar a las personas como recursos al servicio del resultado es alto." },
+      I: { titulo: "El líder que convoca y moviliza", texto: "Tenés fuerza para marcar dirección y energía para convocar a otros. Cuando estás en esta zona, generás adhesión que va más allá del contrato laboral. El desafío: la consistencia. La energía inspiradora requiere sostenerse, y eso implica presencia emocional que no siempre está disponible." },
+      S: { titulo: "La fuerza que protege sin aplastar", texto: "La paciencia del perfil estable actúa como regulador — te ayuda a escuchar antes de responder, a sostener al equipo en lugar de empujarlo. Cuando funciona bien: la fuerza para proteger y la paciencia para desarrollar. El desafío: mantenerla bajo presión." },
+      C: { titulo: "La estrategia con poder de ejecución", texto: "No solo pensás el juego — lo jugás. Eso es escaso y valioso. Tu tensión: entre la velocidad que tu patrón quiere y el rigor que tu estilo analítico requiere." }
+    },
+    perfilDesc: "Sos un líder con una presencia que se siente antes de que digas una palabra. Tu determinación, tu capacidad para tomar decisiones difíciles y tu disposición a proteger a quienes están bajo tu cuidado generan un tipo de lealtad profunda y duradera.",
+    desafioDesc: "El costo de tu intensidad. Tu fuerza puede ser liberadora para quienes necesitan un líder que los respalde — pero puede ser aplastante para quienes necesitan espacio para crecer y desarrollar su propio criterio.",
+    crecimientoDesc: "Aprender que mostrar vulnerabilidad no te hace más débil — te hace más humano. El líder con tu perfil que más crece aprende que su mayor fortaleza no es la fuerza: es la capacidad de crear condiciones para que otros también sean fuertes.",
+    fortalezas: ["Determinación", "Protección del equipo", "Claridad en la adversidad", "Capacidad de confrontación", "Lealtad profunda"],
+    desafios: ["Escucha activa", "Calibrar la intensidad", "Mostrar vulnerabilidad", "Desarrollar autonomía en el equipo", "Gestión de la reactividad"],
+    reflexiones: [
+      "¿Hay alguien en tu equipo que dejó de traerte problemas? ¿Qué pasó para que eso cambiara?",
+      "¿Cuándo fue la última vez que cambiaste de posición porque alguien te convenció con un argumento mejor?",
+      "¿Tu equipo toma decisiones cuando vos no estás, o espera que vuelvas?",
+      "Pensá en alguien a quien hayas lastimado con tu intensidad sin querer. ¿Cómo lo reparaste?",
+      "¿Qué mostrás cuando estás solo que no mostrás cuando hay gente?",
+      "¿Cuándo fue la última vez que pediste ayuda — de verdad, no como estrategia sino como necesidad genuina?"
+    ],
+    coach: {
+      notas: ["No llegará al coaching fácilmente. Si llegó, algo lo lastimó de verdad. Hay que ir despacio con eso.", "Respeta la franqueza y la confrontación directa. La indirecta lo pierde.", "Su vulnerabilidad está muy protegida. Si aparece, es señal de confianza total. No sobreactuarla."],
+      preguntas: ["¿Cuándo fue la última vez que alguien te dijo algo que no querías escuchar y tenía razón?", "¿Qué te costaría mostrar que no sabés algo frente a tu equipo?", "¿Cuándo tu fuerza cuida al equipo y cuándo lo aplasta?"],
+      ciegos: ["Cree que su intensidad es motivación cuando frecuentemente es miedo en el equipo.", "No ve cuánta lealtad pierde por no dar espacio a los demás.", "Confunde control con liderazgo."]
+    }
+  },
+  9: {
+    nombre: "El Pacificador",
+    estrategia: "Esfuerzo por mantener la paz, la armonía y evitar el conflicto",
+    subtipos: {
+      P: "Tu armonía interna está ligada a la estabilidad de tu entorno físico y cotidiano. La rutina y los rituales de cada día son tu base. En el liderazgo, esto aparece como resistencia a los cambios que afectan tu propio espacio. Todo lo que altera tu entorno conocido genera una resistencia que a veces subestimás porque no la expresás directamente.",
+      N: "Te fusionás con el grupo con una facilidad notable. Adoptás sus prioridades y agenda como propias — y eso hace que el equipo se sienta acompañado. Sos el pegamento que mantiene al grupo unido. El riesgo: la pérdida de vos mismo en el proceso. Cuando ya no sabés qué querés vos — qué dirección proponés, qué límites ponés — dejás de liderar y empezás a acompañar.",
+      T: "En tus vínculos más cercanos, tendés a poner las necesidades del otro por encima de las tuyas con una consistencia que a veces roza la desaparición propia. Eso genera vínculos muy profundos — pero también relaciones donde tu voz propia es cada vez más difícil de encontrar. Cuando finalmente aparece, puede venir con una intensidad que sorprende a todos."
+    },
+    disc: {
+      D: { titulo: "La calma que igual llega", texto: "Tu patrón quiere armonía y tu estilo activo quiere resultados — y esas dos cosas no siempre van en la misma dirección. Cuando las lográs integrar, producís liderazgo que avanza sin destruir. Tu mayor desafío: la velocidad. Podés llegar — pero el camino es más lento de lo que el contexto a veces permite." },
+      I: { titulo: "El líder que une sin hacer ruido", texto: "Tenés capacidad de conectar con personas muy distintas y crear un espacio donde todos se sienten incluidos. Eso es muy valioso en organizaciones diversas. El desafío: la visibilidad. Tu liderazgo trabaja en silencio — y eso hace que a veces no se vea, no se reconozca y no se siga cuando más se necesita." },
+      S: { titulo: "El ancla del equipo en la tormenta", texto: "Esta es tu combinación más natural. Cuando todo el mundo reacciona, vos sostenés. Ese rol es insustituible. El riesgo: quedarte solo en el rol de contenedor. Los equipos también necesitan dirección y exigencia. Si solo contenés pero no empujás, construís equipos cómodos que no crecen." },
+      C: { titulo: "El estratega silencioso", texto: "Combinás capacidad analítica con paciencia real para esperar el momento correcto. Tus decisiones son bien pensadas y raramente impulsivas. Tu riesgo: la postergación disfrazada de análisis. Aprender a decidir cuando el análisis es suficiente — aunque no sea completo — es tu mayor palanca." }
+    },
+    perfilDesc: "Sos un líder con una capacidad de contención que pocas personas tienen. Tu serenidad en los momentos de alta tensión, tu capacidad para escuchar sin juzgar y tu talento para mediar son activos reales en organizaciones donde el conflicto mal gestionado destruye más de lo que se puede medir.",
+    desafioDesc: "La presencia activa. Ser un líder pacificador no significa solo no generar conflicto — significa tomar posición, marcar dirección y sostener la incomodidad que implica liderar de verdad.",
+    crecimientoDesc: "Aprender que tomar posición no destruye la armonía — la profundiza. El líder con tu perfil que más crece aprende que su mayor contribución no es la paz que mantiene — es la claridad que da.",
+    fortalezas: ["Capacidad de mediación", "Serenidad bajo presión", "Escucha genuina", "Construcción de cohesión", "Paciencia real"],
+    desafios: ["Tomar posición", "Conversaciones difíciles", "Velocidad de decisión", "Presencia activa", "Gestión del bajo rendimiento"],
+    reflexiones: [
+      "¿Hay un problema en tu organización que todos saben que existe pero que nadie nombra?",
+      "¿Cuándo fue la última vez que tomaste una posición que sabías que iba a generar tensión?",
+      "¿Hay algo que querés para tu organización que nunca dijiste en voz alta porque implicaba confrontar algo?",
+      "¿Tu equipo sabe cuáles son tus prioridades — las tuyas, no las del consenso?",
+      "¿Hay alguien en tu equipo que aprovecha tu tendencia a ceder? ¿Cómo lo manejás?",
+      "Si pudieras pedirle algo a tu equipo — algo para vos — ¿qué sería? ¿Qué te impide pedirlo?"
+    ],
+    coach: {
+      notas: ["Puede usar el acuerdo como resistencia. 'Sí, tenés razón' puede significar que no quiere entrar en el tema.", "Su principal desafío es saber lo que quiere. Empezar por preferencias pequeñas antes de ir a lo grande.", "Necesita que el coach lo presione amablemente. Sin presión, postergará indefinidamente."],
+      preguntas: ["¿Qué querés vos, más allá de lo que quieren los demás?", "¿Cuándo fue la última vez que tomaste una posición que generó incomodidad en otros?", "¿Qué postergás hoy que sabés que necesitás hacer?"],
+      ciegos: ["Cree que evitar el conflicto es armonía cuando frecuentemente es ausencia.", "No ve cuánta influencia pierde por no posicionarse.", "Confunde paz con inacción."]
+    }
+  }
+};
+
+const DISC_PERFILES = {
+  D: {
+    nombre: "Dominante — Rojo",
+    desc: "Liderás desde la acción y la decisión. Tu zona de alto impacto es la crisis, el desafío y la dirección. Tu riesgo es la impaciencia con el proceso y las personas.",
+    color: "#D85A30"
+  },
+  I: {
+    nombre: "Influyente — Amarillo",
+    desc: "Liderás desde la inspiración y la conexión. Tu zona de alto impacto es la cultura, la motivación y la visión. Tu riesgo es la dispersión y el bajo seguimiento.",
+    color: "#BA7517"
+  },
+  S: {
+    nombre: "Estable — Verde",
+    desc: "Liderás desde la confianza y la contención. Tu zona de alto impacto es el desarrollo de personas y la cohesión del equipo. Tu riesgo es el conflicto evitado y la postergación.",
+    color: "#0F6E56"
+  },
+  C: {
+    nombre: "Concienzudo — Azul",
+    desc: "Liderás desde la calidad y el análisis. Tu zona de alto impacto es la estrategia, los sistemas y los estándares. Tu riesgo es la parálisis por perfeccionismo y la dificultad para delegar.",
+    color: "#185FA5"
+  }
+};
+
+// ============================================================
+// ESTADO DE LA APP
+// ============================================================
+let estado = {
+  usuario: {},
+  respuestas: {},
+  respuestasPorId: {},
+  preguntaActual: 0,
+  coachDesbloqueado: false
+};
+
+// ============================================================
+// LÓGICA DE NAVEGACIÓN
+// ============================================================
+function mostrarPantalla(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function iniciarTest() {
+  const nombre = document.getElementById('p-nombre').value.trim();
+  const mail = document.getElementById('p-mail').value.trim();
+  if (!nombre || !mail) { alert('Por favor completá tu nombre y mail para continuar.'); return; }
+  estado.usuario = {
+    nombre: document.getElementById('p-nombre').value,
+    empresa: document.getElementById('p-empresa').value,
+    rol: document.getElementById('p-rol').value,
+    mail: document.getElementById('p-mail').value,
+    origen: document.getElementById('p-origen').value
+  };
+  estado.preguntaActual = 0;
+  mostrarPantalla('screen-test');
+  mostrarPregunta();
+}
+
+function mostrarPregunta() {
+  const q = PREGUNTAS_MEZCLADAS[estado.preguntaActual];
+  const total = PREGUNTAS_MEZCLADAS.length;
+  const n = estado.preguntaActual + 1;
+  const pct = Math.round((n / total) * 100);
+
+  document.getElementById('progress-label').textContent = `Pregunta ${n} de ${total}`;
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-number').textContent = `Pregunta ${n}`;
+  document.getElementById('q-text').textContent = q.text;
+
+  const bloque = estado.preguntaActual < 117 ? 'Bloque 1 — Eneagrama' : 'Bloque 2 — DISC · Insights';
+  const badgeClass = estado.preguntaActual < 117 ? 'block-badge block-1' : 'block-badge block-2';
+  document.getElementById('block-badge').textContent = bloque;
+  document.getElementById('block-badge').className = badgeClass;
+
+  const resp = estado.respuestas[estado.preguntaActual];
+  document.getElementById('btn-si').classList.toggle('selected', resp === 1);
+  document.getElementById('btn-no').classList.toggle('selected', resp === 0);
+}
+
+function responder(val) {
+  estado.respuestas[estado.preguntaActual] = val;
+  // Also store by question ID for accurate scoring
+  const q = PREGUNTAS_MEZCLADAS[estado.preguntaActual];
+  if (q) estado.respuestasPorId[q.id] = val;
+  document.getElementById('btn-si').classList.toggle('selected', val === 1);
+  document.getElementById('btn-no').classList.toggle('selected', val === 0);
+  setTimeout(() => {
+    if (estado.preguntaActual < PREGUNTAS_MEZCLADAS.length - 1) {
+      estado.preguntaActual++;
+      mostrarPregunta();
+    } else {
+      calcularResultados();
+    }
+  }, 300);
+}
+
+function siguiente() {
+  if (estado.preguntaActual < PREGUNTAS_MEZCLADAS.length - 1) {
+    estado.preguntaActual++;
+    mostrarPregunta();
+  } else {
+    calcularResultados();
+  }
+}
+
+function anterior() {
+  if (estado.preguntaActual > 0) {
+    estado.preguntaActual--;
+    mostrarPregunta();
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('screen-test').classList.contains('active')) {
+    if (e.key === 's' || e.key === 'S') responder(1);
+    if (e.key === 'n' || e.key === 'N') responder(0);
+    if (e.key === 'ArrowRight') siguiente();
+    if (e.key === 'ArrowLeft') anterior();
+  }
+});
+
+// ============================================================
+// CÁLCULO DE RESULTADOS
+// ============================================================
+function calcularResultados() {
+  const scoresTipo = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+  const scoresSubtipo = {};
+  for (let t = 1; t <= 9; t++) scoresSubtipo[t] = {P:0,N:0,T:0};
+  const scoresDISC = {D:0,I:0,S:0,C:0};
+
+  PREGUNTAS_MEZCLADAS.forEach((q, idx) => {
+    // Use ID-based response if available, fallback to position-based
+    const resp = (estado.respuestasPorId[q.id] !== undefined) 
+                  ? estado.respuestasPorId[q.id] 
+                  : (estado.respuestas[idx] || 0);
+    if (q.tipo === 'E') scoresTipo[q.enaTipo] += resp;
+    if (q.tipo === 'ES') scoresSubtipo[q.enaTipo][q.subtipo] += resp;
+    if (q.tipo === 'D') scoresDISC[q.discTipo] += resp;
+  });
+
+  const tipoMax = Object.entries(scoresTipo).sort((a,b) => b[1]-a[1])[0][0];
+  // Usar solo subtipos del tipo dominante con parseInt para evitar mismatch string/int
+  const subtipos = scoresSubtipo[parseInt(tipoMax)];
+  const totalSub = (subtipos.P || 0) + (subtipos.N || 0) + (subtipos.T || 0);
+  let subtipoMax;
+  if (totalSub === 0) {
+    const opts = ['P','N','T'];
+    subtipoMax = opts[Math.floor(Math.random() * 3)];
+  } else {
+    subtipoMax = Object.entries(subtipos).sort((a,b) => b[1]-a[1])[0][0];
+  };
+  const discMax = Object.entries(scoresDISC).sort((a,b) => b[1]-a[1])[0][0];
+
+  estado.resultados = { tipoMax: parseInt(tipoMax), subtipoMax, discMax, scoresTipo, scoresSubtipo, scoresDISC };
+  mostrarResultados();
+}
+
+function mostrarResultados() {
+  const r = estado.resultados;
+  const tipo = TIPOS_ENA[r.tipoMax];
+  const disc = DISC_PERFILES[r.discMax];
+  const subtLabels = {P:'Preservar', N:'Navegar', T:'Transmitir'};
+  const subtColors = {P:'sub-P', N:'sub-N', T:'sub-T'};
+  const discColors = {D:'#D85A30', I:'#BA7517', S:'#0F6E56', C:'#185FA5'};
+  const discNames = {D:'Dominante', I:'Influyente', S:'Estable', C:'Concienzudo'};
+  const u = estado.usuario;
+
+  // Hero
+  document.getElementById('res-titulo').textContent = 'Perfil de ' + u.nombre.split(' ')[0];
+  document.getElementById('res-subtitulo').textContent = tipo.nombre + ' · ' + subtLabels[r.subtipoMax] + ' · ' + disc.nombre.split(' — ')[0];
+
+  // 01 Patrón central
+  document.getElementById('res-tipo-num').textContent = r.tipoMax;
+  document.getElementById('res-tipo-nombre').textContent = tipo.nombre;
+  document.getElementById('res-tipo-estrategia').textContent = tipo.estrategia;
+  document.getElementById('res-perfil-desc').textContent = tipo.perfilDesc;
+  document.getElementById('res-desafio-desc').textContent = tipo.desafioDesc;
+  document.getElementById('res-crecimiento-desc').textContent = tipo.crecimientoDesc;
+
+  // 02 Subtipo
+  const badge = document.getElementById('res-subtipo-badge');
+  badge.textContent = subtLabels[r.subtipoMax];
+  badge.className = 'subtipo-badge ' + subtColors[r.subtipoMax];
+  document.getElementById('res-subtipo-desc').textContent = tipo.subtipos[r.subtipoMax];
+
+  // 03 DISC
+  document.getElementById('res-disc-letra').textContent = r.discMax;
+  document.getElementById('res-disc-letra').style.background = discColors[r.discMax];
+  document.getElementById('res-disc-titulo').textContent = tipo.disc[r.discMax].titulo;
+  document.getElementById('res-disc-desc').textContent = tipo.disc[r.discMax].texto;
+
+  const maxDisc = Math.max(...Object.values(r.scoresDISC)) || 1;
+  document.getElementById('disc-bars').innerHTML = Object.entries(r.scoresDISC)
+    .sort((a,b) => b[1]-a[1])
+    .map(([k,v]) => '<div class="disc-bar-row">' +
+      '<span class="disc-label" style="color:' + discColors[k] + '">' + k + ' · ' + discNames[k] + '</span>' +
+      '<div class="disc-bar-bg"><div class="disc-bar-fill" style="width:' + Math.round(v/maxDisc*100) + '%;background:' + discColors[k] + '"></div></div>' +
+      '<span class="disc-score">' + v + '</span></div>').join('');
+
+  // 04 Síntesis
+  document.getElementById('res-fortalezas').innerHTML = tipo.fortalezas.map(f => '<div class="fort-item">' + f + '</div>').join('');
+  document.getElementById('res-desafios').innerHTML = tipo.desafios.map(d => '<div class="desaf-item">' + d + '</div>').join('');
+
+  // 05 Reflexiones
+  document.getElementById('res-reflexiones').innerHTML = tipo.reflexiones.map((q,i) =>
+    '<div class="reflexion-item">' +
+    '<div class="reflexion-num">' + (i+1) + '</div>' +
+    '<div class="reflexion-text">' + q + '</div>' +
+    '</div>').join('');
+
+  // Coach content
+  const c = tipo.coach;
+  document.getElementById('coach-notas').innerHTML = c.notas.map(n => '<div class="coach-item">· ' + n + '</div>').join('');
+  document.getElementById('coach-preguntas').innerHTML = c.preguntas.map(p => '<div class="coach-q">' + p + '</div>').join('');
+  document.getElementById('coach-ciegos').innerHTML = c.ciegos.map(ci => '<div class="coach-item">· ' + ci + '</div>').join('');
+
+  mostrarPantalla('screen-resultados');
+}
+
+function generarPDFCliente() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('p','mm','a4');
+  const r = estado.resultados;
+  const tipo = TIPOS_ENA[r.tipoMax];
+  const disc = DISC_PERFILES[r.discMax];
+  const subtLabels = {P:'Preservar',N:'Navegar',T:'Transmitir'};
+  const u = estado.usuario;
+  const W = 210; const navy = [27,43,107]; const orange = [245,166,35];
+  let y = 0;
+
+  // Header
+  doc.setFillColor(...navy);
+  doc.rect(0,0,W,48,'F');
+  doc.setFillColor(...orange);
+  doc.rect(0,46,W,3,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
+  doc.text('Tu perfil de liderazgo', W/2, 18, {align:'center'});
+  doc.setFontSize(11); doc.setFont('helvetica','normal');
+  doc.text(u.nombre + (u.empresa ? '  ·  ' + u.empresa : '') + (u.rol ? '  ·  ' + u.rol : ''), W/2, 30, {align:'center'});
+  doc.setFontSize(10);
+  doc.text('Este informe es un espejo, no un juicio. Es un punto de partida para liderar con más consciencia.', W/2, 40, {align:'center'});
+  y = 60;
+
+  const checkPage = (needed) => { if (y + needed > 275) { doc.addPage(); y = 16; } };
+  const addSectionTitle = (t) => {
+    checkPage(14);
+    doc.setFillColor(235,240,252); doc.rect(14,y-4,182,9,'F');
+    doc.setTextColor(...navy); doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text(t.toUpperCase(), 16, y+1); y += 10;
+  };
+  const addText = (t, indent=16, size=10) => {
+    checkPage(10);
+    doc.setTextColor(50,50,50); doc.setFontSize(size); doc.setFont('helvetica','normal');
+    const lines = doc.splitTextToSize(t, 178);
+    lines.forEach(line => { checkPage(6); doc.text(line, indent, y); y += 5.5; });
+    y += 2;
+  };
+  const addBold = (t, indent=16) => {
+    checkPage(8);
+    doc.setTextColor(...navy); doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text(t, indent, y); y += 7;
+  };
+
+  // 01 Patrón central
+  addSectionTitle('01 · Tu patrón central');
+  addText(tipo.perfilDesc); y += 2;
+  addText(tipo.desafioDesc); y += 2;
+  addText(tipo.crecimientoDesc); y += 4;
+
+  // 02 Cómo se expresa en lo cotidiano
+  addSectionTitle('02 · Cómo se expresa tu patrón en lo cotidiano');
+  addText(tipo.subtipos[r.subtipoMax]); y += 4;
+
+  // 03 Estilo de liderazgo
+  addSectionTitle('03 · Tu estilo de liderazgo');
+  addBold(tipo.disc[r.discMax].titulo);
+  addText(tipo.disc[r.discMax].texto); y += 4;
+
+  // 04 Síntesis
+  addSectionTitle('04 · En síntesis');
+  addBold('Fortalezas de liderazgo:');
+  tipo.fortalezas.forEach(f => addText('· ' + f, 20, 9));
+  y += 2;
+  addBold('Áreas de desarrollo:');
+  tipo.desafios.forEach(d => addText('· ' + d, 20, 9));
+  y += 4;
+
+  // 05 DISC bars
+  addSectionTitle('05 · Tu perfil de estilos');
+  const discColors = {D:[216,90,48],I:[186,117,23],S:[15,110,86],C:[24,95,165]};
+  const discNames = {D:'Dominante',I:'Influyente',S:'Estable',C:'Concienzudo'};
+  const maxVal = Math.max(...Object.values(r.scoresDISC)) || 1;
+  Object.entries(r.scoresDISC).sort((a,b)=>b[1]-a[1]).forEach(([k,v]) => {
+    checkPage(10);
+    doc.setTextColor(80,80,80); doc.setFontSize(9); doc.setFont('helvetica','normal');
+    doc.text(`${k} · ${discNames[k]}`, 16, y);
+    doc.setFillColor(225,225,225); doc.rect(60,y-3.5,120,5,'F');
+    doc.setFillColor(...discColors[k]); doc.rect(60,y-3.5,120*(v/maxVal),5,'F');
+    doc.text(String(v), 186, y, {align:'right'});
+    y += 9;
+  }); y += 4;
+
+  // 06 Preguntas reflexión
+  addSectionTitle('06 · Preguntas para reflexionar antes de tu próxima sesión');
+  tipo.reflexiones.forEach((q,i) => {
+    checkPage(14);
+    doc.setFillColor(240,244,255); doc.rect(14,y-3,182,12,'F');
+    doc.setTextColor(...navy); doc.setFontSize(8); doc.setFont('helvetica','bold');
+    doc.text(`${i+1}.`, 17, y+3);
+    doc.setFont('helvetica','normal'); doc.setTextColor(40,40,70);
+    const lines = doc.splitTextToSize(q, 168);
+    lines.forEach((line,li) => { doc.text(line, 23, y+3+(li*4.5)); });
+    y += Math.max(12, lines.length * 4.5 + 4);
+  }); y += 6;
+
+  // Footer
+  checkPage(20);
+  doc.setFillColor(240,244,255); doc.rect(14,y,182,18,'F');
+  doc.setTextColor(...navy); doc.setFontSize(8); doc.setFont('helvetica','bold');
+  doc.text('Alto Impacto Consultora', W/2, y+7, {align:'center'});
+  doc.setFont('helvetica','normal'); doc.setTextColor(100,100,120);
+  doc.text('laurasanchezcoach.com  ·  @laura.tucoach', W/2, y+12, {align:'center'});
+  doc.setFontSize(7);
+  doc.text('Fundamento metodológico: Eneagrama (Riso & Hudson, 1999; Sikora & Munita — ATA) · DISC (Marston, 1928) · Insights (Aitken, 1993; Jung, 1921)', W/2, y+17, {align:'center'});
+
+  doc.save(`Perfil_Liderazgo_${u.nombre.replace(/\s/g,'_')}.pdf`);
+}
+
+// ============================================================
+// PDF COACH
+// ============================================================
+function generarPDFCoach() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('p','mm','a4');
+  const r = estado.resultados;
+  const tipo = TIPOS_ENA[r.tipoMax];
+  const disc = DISC_PERFILES[r.discMax];
+  const subtLabels = {P:'Preservar',N:'Navegar',T:'Transmitir'};
+  const u = estado.usuario;
+  const W = 210; const navy = [27,43,107]; const orange = [245,166,35];
+  let y = 0;
+
+  // Header
+  doc.setFillColor(...navy);
+  doc.rect(0,0,W,48,'F');
+  doc.setFillColor(...orange);
+  doc.rect(0,46,W,3,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('Informe Coach — Uso Interno', W/2, 18, {align:'center'});
+  doc.setFontSize(11); doc.setFont('helvetica','normal');
+  doc.text('Alto Impacto Consultora · Confidencial', W/2, 28, {align:'center'});
+  doc.setFontSize(10);
+  doc.text(`Cliente: ${u.nombre}  ·  ${u.empresa||''}  ·  ${u.rol||''}  ·  ${u.mail||''}`, W/2, 38, {align:'center'});
+  y = 60;
+
+  const checkPage = (needed) => { if (y + needed > 275) { doc.addPage(); y = 16; } };
+  const addSectionTitle = (t, color=navy) => {
+    checkPage(14);
+    doc.setFillColor(235,240,252); doc.rect(14,y-4,182,9,'F');
+    doc.setTextColor(...color); doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text(t.toUpperCase(), 16, y+1); y += 10;
+  };
+  const addText = (t, indent=16, size=10) => {
+    checkPage(10);
+    doc.setTextColor(50,50,50); doc.setFontSize(size); doc.setFont('helvetica','normal');
+    const lines = doc.splitTextToSize(t, 178);
+    lines.forEach(line => { checkPage(6); doc.text(line, indent, y); y += 5.5; });
+    y += 2;
+  };
+  const addBold = (t, indent=16, color=navy) => {
+    checkPage(8);
+    doc.setTextColor(...color); doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text(t, indent, y); y += 7;
+  };
+
+  // Resumen perfil
+  addSectionTitle('Perfil del cliente');
+  addBold(`${tipo.nombre} · ${subtLabels[r.subtipoMax]} · DISC ${r.discMax} — ${disc.nombre}`);
+  addText(tipo.perfilDesc);
+  addText(tipo.desafioDesc); y += 2;
+
+  // Subtipo
+  addSectionTitle('Cómo se expresa su patrón');
+  addText(tipo.subtipos[r.subtipoMax]); y += 2;
+
+  // DISC combo
+  addSectionTitle('Estilo de liderazgo');
+  addBold(tipo.disc[r.discMax].titulo);
+  addText(tipo.disc[r.discMax].texto); y += 2;
+
+  // Coach notes
+  addSectionTitle('Notas de facilitación', [150,80,10]);
+  tipo.coach.notas.forEach(n => { checkPage(12); addText('· ' + n, 18, 9); });
+  y += 2;
+
+  addSectionTitle('Preguntas para la primera sesión', [15,80,100]);
+  tipo.coach.preguntas.forEach(p => { checkPage(12); addText('➤ ' + p, 18, 9); });
+  y += 2;
+
+  addSectionTitle('Puntos ciegos típicos', [150,30,30]);
+  tipo.coach.ciegos.forEach(c => { checkPage(12); addText('· ' + c, 18, 9); });
+  y += 2;
+
+  // DISC scores
+  addSectionTitle('Scores detallados');
+  const discColors = {D:[216,90,48],I:[186,117,23],S:[15,110,86],C:[24,95,165]};
+  const discNames = {D:'Dominante',I:'Influyente',S:'Estable',C:'Concienzudo'};
+  const maxVal = Math.max(...Object.values(r.scoresDISC)) || 1;
+  Object.entries(r.scoresDISC).sort((a,b)=>b[1]-a[1]).forEach(([k,v]) => {
+    checkPage(10);
+    doc.setTextColor(80,80,80); doc.setFontSize(9); doc.setFont('helvetica','normal');
+    doc.text(`${k} · ${discNames[k]}`, 16, y);
+    doc.setFillColor(225,225,225); doc.rect(60,y-3.5,120,5,'F');
+    doc.setFillColor(...discColors[k]); doc.rect(60,y-3.5,120*(v/maxVal),5,'F');
+    doc.text(String(v), 186, y, {align:'right'});
+    y += 9;
+  });
+
+  addBold('Scores Eneagrama:', 16, [80,80,80]);
+  const enaText = Object.entries(r.scoresTipo).map(([k,v])=>`T${k}:${v}`).join('  ');
+  addText(enaText, 16, 9); y += 4;
+
+  // Preguntas reflexión
+  addSectionTitle('Preguntas de reflexión del cliente');
+  tipo.reflexiones.forEach((q,i) => {
+    checkPage(12); addText(`${i+1}. ${q}`, 18, 9);
+  }); y += 4;
+
+  // Confidential footer
+  checkPage(16);
+  doc.setFillColor(...navy); doc.rect(14,y,182,14,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont('helvetica','bold');
+  doc.text('DOCUMENTO CONFIDENCIAL — SOLO PARA USO DEL COACH', W/2, y+9, {align:'center'});
+
+  doc.save(`InformeCoach_${u.nombre.replace(/\s/g,'_')}.pdf`);
+}
+
+
+// ============================================================
+// ENVÍO A GOOGLE SHEETS + MAIL
+// ============================================================
+function enviarResultados(tipoNum, subtipoMax, discMax, scoresTipo, scoresDISC) {
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbydZwVOztW878Tpr3BVK9jDVD9oa3Hhyn9GohUmKSwwoDMaSZgJWouthzua3hMnTepsVg/exec';
+  const subtLabels = {P:'Preservar', N:'Navegar', T:'Transmitir'};
+  const u = estado.usuario;
+  const tipo = TIPOS_ENA[tipoNum];
+
+  const payload = {
+    nombre:     u.nombre,
+    empresa:    u.empresa || '',
+    rol:        u.rol || '',
+    mail:       u.mail,
+    origen:     u.origen || '',
+    tipoNum:    tipoNum,
+    tipoNombre: tipo.nombre,
+    subtipo:    subtLabels[subtipoMax],
+    discMax:    discMax,
+    scoreT1: scoresTipo[1] || 0,
+    scoreT2: scoresTipo[2] || 0,
+    scoreT3: scoresTipo[3] || 0,
+    scoreT4: scoresTipo[4] || 0,
+    scoreT5: scoresTipo[5] || 0,
+    scoreT6: scoresTipo[6] || 0,
+    scoreT7: scoresTipo[7] || 0,
+    scoreT8: scoresTipo[8] || 0,
+    scoreT9: scoresTipo[9] || 0,
+    scoreD: scoresDISC['D'] || 0,
+    scoreI: scoresDISC['I'] || 0,
+    scoreS: scoresDISC['S'] || 0,
+    scoreC: scoresDISC['C'] || 0
+  };
+
+  // Enviar a Google Sheets
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.log('Sheets error:', err));
+
+  // Enviar mail via EmailJS
+  const templateParams = {
+    to_email: 'laura@laurasanchezcoach.com',
+    subject: 'Nuevo test completado: ' + u.nombre + ' (' + (u.empresa || 'sin empresa') + ')',
+    nombre: u.nombre,
+    empresa: u.empresa || '—',
+    rol: u.rol || '—',
+    mail_cliente: u.mail,
+    como_llego: u.origen || '—',
+    tipo_eneagrama: tipoNum + ' — ' + tipo.nombre,
+    subtipo: subtLabels[subtipoMax],
+    perfil_disc: discMax,
+    scores_eneagrama: Object.entries(scoresTipo).map(function(e){return 'T'+e[0]+':'+e[1];}).join(' | '),
+    scores_disc: 'D:'+scoresDISC['D']+' I:'+scoresDISC['I']+' S:'+scoresDISC['S']+' C:'+scoresDISC['C'],
+    message: 'Nombre: ' + u.nombre + '\nEmpresa: ' + (u.empresa||'—') + '\nRol: ' + (u.rol||'—') + '\nMail: ' + u.mail + '\nTipo: ' + tipoNum + ' — ' + tipo.nombre + '\nSubtipo: ' + subtLabels[subtipoMax] + '\nDISC: ' + discMax + '\nScores Eneagrama: ' + Object.entries(scoresTipo).map(function(e){return 'T'+e[0]+':'+e[1];}).join(' | ') + '\nScores DISC: D:'+scoresDISC['D']+' I:'+scoresDISC['I']+' S:'+scoresDISC['S']+' C:'+scoresDISC['C']
+  };
+
+  emailjs.send('service_rhtaaqj', 'template_x43th0l', templateParams)
+    .then(function(res){ 
+      console.log('Mail enviado OK:', res.status, res.text);
+      // Show subtle confirmation
+      const btn = document.querySelector('.btn-client');
+      if (btn) btn.title = 'Mail enviado a coach';
+    })
+    .catch(function(err){ 
+      console.error('Mail error completo:', JSON.stringify(err));
+      // Try alternative: log full error details
+      console.error('Status:', err.status, 'Text:', err.text);
+    });
+}
+
+
+// ============================================================
+// MODAL COACH
+// ============================================================
+function abrirModalCoach() {
+  if (estado.coachDesbloqueado) {
+    toggleCoach();
+    return;
+  }
+  document.getElementById('coach-overlay').classList.add('show');
+  document.getElementById('coach-pwd').value = '';
+  document.getElementById('coach-error').style.display = 'none';
+  setTimeout(() => document.getElementById('coach-pwd').focus(), 100);
+}
+
+function cerrarModal() {
+  document.getElementById('coach-overlay').classList.remove('show');
+}
+
+function verificarClave() {
+  const pwd = document.getElementById('coach-pwd').value;
+  if (pwd === 'AltoImpact0$') {
+    estado.coachDesbloqueado = true;
+    cerrarModal();
+    toggleCoach();
+  } else {
+    document.getElementById('coach-error').style.display = 'block';
+    document.getElementById('coach-pwd').value = '';
+  }
+}
+
+function toggleCoach() {
+  const el = document.getElementById('coach-content');
+  const showing = el.style.display !== 'none';
+  el.style.display = showing ? 'none' : 'block';
+  document.querySelector('.btn-coach-toggle').textContent = showing ? '🔒 Vista coach' : '🔓 Ocultar vista coach';
+}
+
+</script>
+</body>
+</html>
