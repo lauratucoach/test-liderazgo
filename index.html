@@ -936,6 +936,7 @@ const DISC_PERFILES = {
 let estado = {
   usuario: {},
   respuestas: {},
+  respuestasPorId: {},
   preguntaActual: 0,
   coachDesbloqueado: false
 };
@@ -989,6 +990,9 @@ function mostrarPregunta() {
 
 function responder(val) {
   estado.respuestas[estado.preguntaActual] = val;
+  // Also store by question ID for accurate scoring
+  const q = PREGUNTAS_MEZCLADAS[estado.preguntaActual];
+  if (q) estado.respuestasPorId[q.id] = val;
   document.getElementById('btn-si').classList.toggle('selected', val === 1);
   document.getElementById('btn-no').classList.toggle('selected', val === 0);
   setTimeout(() => {
@@ -1036,7 +1040,10 @@ function calcularResultados() {
   const scoresDISC = {D:0,I:0,S:0,C:0};
 
   PREGUNTAS_MEZCLADAS.forEach((q, idx) => {
-    const resp = estado.respuestas[idx] || 0;
+    // Use ID-based response if available, fallback to position-based
+    const resp = (estado.respuestasPorId[q.id] !== undefined) 
+                  ? estado.respuestasPorId[q.id] 
+                  : (estado.respuestas[idx] || 0);
     if (q.tipo === 'E') scoresTipo[q.enaTipo] += resp;
     if (q.tipo === 'ES') scoresSubtipo[q.enaTipo][q.subtipo] += resp;
     if (q.tipo === 'D') scoresDISC[q.discTipo] += resp;
@@ -1413,6 +1420,44 @@ function enviarResultados(tipoNum, subtipoMax, discMax, scoresTipo, scoresDISC) 
       // Try alternative: log full error details
       console.error('Status:', err.status, 'Text:', err.text);
     });
+}
+
+
+// ============================================================
+// MODAL COACH
+// ============================================================
+function abrirModalCoach() {
+  if (estado.coachDesbloqueado) {
+    toggleCoach();
+    return;
+  }
+  document.getElementById('coach-overlay').classList.add('show');
+  document.getElementById('coach-pwd').value = '';
+  document.getElementById('coach-error').style.display = 'none';
+  setTimeout(() => document.getElementById('coach-pwd').focus(), 100);
+}
+
+function cerrarModal() {
+  document.getElementById('coach-overlay').classList.remove('show');
+}
+
+function verificarClave() {
+  const pwd = document.getElementById('coach-pwd').value;
+  if (pwd === 'AltoImpact0$') {
+    estado.coachDesbloqueado = true;
+    cerrarModal();
+    toggleCoach();
+  } else {
+    document.getElementById('coach-error').style.display = 'block';
+    document.getElementById('coach-pwd').value = '';
+  }
+}
+
+function toggleCoach() {
+  const el = document.getElementById('coach-content');
+  const showing = el.style.display !== 'none';
+  el.style.display = showing ? 'none' : 'block';
+  document.querySelector('.btn-coach-toggle').textContent = showing ? '🔒 Vista coach' : '🔓 Ocultar vista coach';
 }
 
 </script>
